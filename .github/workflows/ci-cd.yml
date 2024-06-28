@@ -20,7 +20,7 @@ jobs:
         run: cd server
 
       - name: Install Backend Dependencies
-        run: npm ci
+        run: npm install
 
       - name: Compile TypeScript (Backend)
         run: npm run tsc
@@ -33,6 +33,6 @@ jobs:
 
         # - name: Build Project (Frontend)
         #   run: |
-        #     cd frontend
-        #     npm ci
+        #     cd client
+        #     npm install
         #     npm run build
