@@ -12,4 +12,14 @@ Content-Type: application/json
 
 ###
 // do GET request and take an ID from there first
-DELETE http://localhost:3001/todos/667d80b6cd16197459f3ee7
+DELETE http://localhost:3001/todos/667ecffc4d1f25bf44236377
+
+###
+
+PUT http://localhost:3001/todos/667ecffd4d1f25bf44236379
+Content-Type: application/json
+
+{
+		"todo": "Updated Todo",
+		"important": true
+}

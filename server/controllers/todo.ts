@@ -69,11 +69,38 @@ const deleteTodo = async (
 	}
 };
 
-// change importance
-// update notes
+const updateTodo = async (
+	req: Request,
+	res: Response,
+	next: NextFunction
+): Promise<Response | void> => {
+	try {
+		const body = req.body as TodoRequestBody;
+
+		if (!body.todo) {
+			return res.status(400).json({ error: 'Content cannot be empty' });
+		}
+
+		const todo = {
+			todo: body.todo,
+			important: body.important,
+		};
+
+		const updatedTodo = await Todo.findByIdAndUpdate(req.params.id, todo, { new: true });
+
+		if (!updatedTodo) {
+			return res.status(404).json({ message: 'Todo not found' });
+		}
+
+		res.json(updatedTodo);
+	} catch (error) {
+		next(error);
+	}
+};
 
 export default {
 	getTodos,
 	createTodo,
 	deleteTodo,
+	updateTodo,
 };

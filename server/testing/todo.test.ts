@@ -83,6 +83,55 @@ describe('/DELETE todos/id', () => {
 	});
 });
 
+describe('/PUT todos/id', () => {
+	let testTodoId: string;
+
+	const updateTodo = {
+		todo: 'Updated Todo',
+		important: true,
+	};
+
+	beforeEach(async () => {
+		const testTodo = {
+			todo: 'Test Todo to Update',
+			important: true,
+		};
+
+		const response = await api
+			.post('/todos')
+			.set('Content-Type', 'application/json')
+			.send(testTodo);
+
+		expect(response.status).toBe(201);
+		// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+		testTodoId = response.body.id.toString();
+	});
+
+	it('put request works', async () => {
+		const response = await api.put(`/todos/${testTodoId}`).send(updateTodo);
+		expect(response.status).toBe(200);
+		expect(response.body.todo).toEqual('Updated Todo');
+		expect(response.body.important).toEqual(true);
+	});
+
+	it("error message displays if ID doesn't exist", async () => {
+		const response = await api.put('/todos/wrong-id').send(updateTodo);
+		expect(response.status).toBe(400);
+		expect(response.body).toEqual({ error: 'Malformatted id' });
+	});
+
+	it('error message displays if toto content is empty', async () => {
+		const emptyTodo = {
+			todo: '',
+			important: true,
+		};
+
+		const response = await api.put(`/todos/${testTodoId}`).send(emptyTodo);
+		expect(response.status).toBe(400);
+		expect(response.body).toEqual({ error: 'Content cannot be empty' });
+	});
+});
+
 afterAll(async () => {
 	await mongoose.connection.close();
 	console.log('Server closed');
