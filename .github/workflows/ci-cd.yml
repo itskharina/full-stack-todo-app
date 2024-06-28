@@ -1,0 +1,38 @@
+name: Prepare for Deployment
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 16
+
+      - name: Change Directory to Backend
+        run: cd backend
+
+      - name: Install Backend Dependencies
+        run: npm ci
+
+      - name: Compile TypeScript (Backend)
+        run: npm run tsc
+
+      - name: Test Backend code
+        run: npm run test
+
+      - name: Lint Backend code
+        run: npm run lint
+
+        # - name: Build Project (Frontend)
+        #   run: |
+        #     cd frontend
+        #     npm ci
+        #     npm run build

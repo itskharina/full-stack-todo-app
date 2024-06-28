@@ -1,0 +1,15 @@
+GET http://localhost:3001/todos
+
+###
+
+POST http://localhost:3001/todos
+Content-Type: application/json
+
+{
+		"todo": "test3",
+		"important": true
+}
+
+###
+// do GET request and take an ID from there first
+DELETE http://localhost:3001/todos/667d80b6cd16197459f3ee7
