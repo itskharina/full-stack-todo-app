@@ -16,20 +16,24 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Change Directory to Backend
-        run: cd server
+      #   - name: Change Directory to Backend
+      #     run: cd server
 
       - name: Install Backend Dependencies
         run: npm install
+        working-directory: ./server
 
       - name: Compile TypeScript (Backend)
         run: npm run tsc
+        working-directory: ./server
 
       - name: Test Backend code
         run: npm run test
+        working-directory: ./server
 
       - name: Lint Backend code
         run: npm run lint
+        working-directory: ./server
 
         # - name: Build Project (Frontend)
         #   run: |
