@@ -1,4 +1,4 @@
-name: Prepare for Deployment
+name: Test Backend
 
 on:
   push:
@@ -9,12 +9,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3 # Update to the latest version supporting Node.js 20
 
       - name: Set up Node.js
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3 # Update to the latest version supporting Node.js 20
         with:
-          node-version: 20
+          node-version: '20'
 
       - name: Change Directory to Backend
         run: cd server
