@@ -7,6 +7,9 @@ on:
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
+    env:
+      MONGO_URI: ${{ secrets.MONGODB_URI }}
+      TEST_MONGODB_URI: ${{ secrets.TEST_MONGODB_URI }}
 
     steps:
       - uses: actions/checkout@v3 # Update to the latest version supporting Node.js 20
@@ -30,6 +33,8 @@ jobs:
       - name: Test Backend code
         run: npm run test
         working-directory: ./server
+        env:
+          NODE_ENV: test
 
       - name: Lint Backend code
         run: npm run lint
