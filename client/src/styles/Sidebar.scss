@@ -1,0 +1,96 @@
+$sidebarColour: #d1cde6;
+$fontColour: #524f5f;
+$backgroundColour: #f1eef7;
+
+.navbar {
+	background-color: #59556d;
+	height: 80px;
+	display: flex;
+	justify-content: flex-start;
+	align-items: center;
+
+	button {
+		outline: none;
+		border: none;
+		cursor: pointer;
+	}
+}
+
+.menu-bars {
+	margin-left: 2rem;
+	font-size: 2rem;
+	background: none;
+	color: #000;
+}
+
+.nav-menu {
+	background-color: $sidebarColour;
+	width: 250px;
+	height: 100vh;
+	display: flex;
+	justify-content: center;
+	position: fixed;
+	top: 0;
+	left: -100%;
+	transition: 850ms;
+}
+
+.nav-menu.active {
+	left: 0;
+	transition: 450ms;
+}
+
+h3 {
+	text-transform: uppercase;
+	font-size: 15px;
+	padding-left: 16px;
+	font-weight: 600;
+	color: $fontColour;
+}
+
+.projects-title {
+	margin-top: 25px;
+}
+
+.nav-text {
+	display: flex;
+	justify-content: flex-start;
+	align-items: center;
+	padding: 8px 0px 8px 8px;
+	list-style: none;
+	height: 60px;
+
+	a {
+		text-decoration: none;
+		color: $fontColour;
+		font-size: 18px;
+		width: 95%;
+		height: 100%;
+		display: flex;
+		align-items: center;
+		padding: 0 16px;
+		border-radius: 4px;
+
+		&:hover {
+			background-color: #beb9d7;
+		}
+	}
+}
+
+.nav-menu-items {
+	width: 100%;
+}
+
+.navbar-toggle {
+	background-color: $sidebarColour;
+	width: 100%;
+	height: 80px;
+	display: flex;
+	justify-content: flex-start;
+	align-items: center;
+	margin-left: -5px;
+}
+
+span {
+	margin-left: 16px;
+}

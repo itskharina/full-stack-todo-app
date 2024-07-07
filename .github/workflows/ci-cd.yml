@@ -12,10 +12,10 @@ jobs:
       TEST_MONGODB_URI: ${{ secrets.TEST_MONGODB_URI }}
 
     steps:
-      - uses: actions/checkout@v3 # Update to the latest version supporting Node.js 20
+      - uses: actions/checkout@v3
 
       - name: Set up Node.js
-        uses: actions/setup-node@v3 # Update to the latest version supporting Node.js 20
+        uses: actions/setup-node@v3
         with:
           node-version: '20'
 
