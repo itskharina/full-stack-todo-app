@@ -1,11 +1,13 @@
-import React from 'react';
+import { useSidebar } from '../components/Sidebar/SidebarContext';
 
-function Week() {
+const Week = () => {
+	const { sidebar } = useSidebar();
+
 	return (
-		<div className='week'>
+		<div className={`week ${sidebar ? 'sidebar-open' : ''}`}>
 			<h1>Week</h1>
 		</div>
 	);
-}
+};
 
 export default Week;

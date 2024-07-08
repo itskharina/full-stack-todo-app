@@ -31,16 +31,16 @@ $backgroundColour: #f1eef7;
 	justify-content: center;
 	position: fixed;
 	top: 0;
-	left: -100%;
-	transition: 850ms;
+	left: -35%;
+	transition: left 0.4s ease;
 }
 
 .nav-menu.active {
 	left: 0;
-	transition: 450ms;
 }
 
-h3 {
+h3.tasks-title,
+h3.projects-title {
 	text-transform: uppercase;
 	font-size: 15px;
 	padding-left: 16px;
@@ -77,8 +77,9 @@ h3 {
 	}
 }
 
-.nav-menu-items {
+ul.nav-menu-items {
 	width: 100%;
+	padding: 0;
 }
 
 .navbar-toggle {
@@ -93,4 +94,8 @@ h3 {
 
 span {
 	margin-left: 16px;
+}
+
+ul.categories {
+	padding: 0;
 }

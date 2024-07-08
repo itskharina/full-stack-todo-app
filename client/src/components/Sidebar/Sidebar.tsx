@@ -5,23 +5,22 @@ import { Link } from 'react-router-dom';
 import { SidebarData } from './SidebarData.js';
 import '../../styles/Sidebar.scss';
 import { IconContext } from 'react-icons';
+import { useSidebar } from './SidebarContext.js';
 
 function Sidebar() {
-	const [sidebar, setSidebar] = useState(false);
-
-	const showSidebar = () => setSidebar(!sidebar);
+	const { sidebar, toggleSidebar } = useSidebar(); // Use the hook to get sidebar state and toggle function
 
 	return (
 		<>
 			<IconContext.Provider value={{ color: 'undefined' }}>
 				<div className='navbar'>
-					<button className='menu-bars' onClick={showSidebar}>
+					<button className='menu-bars' onClick={toggleSidebar}>
 						<FaBars color='white' />
 					</button>
 				</div>
 
 				<nav className={sidebar ? 'nav-menu active' : 'nav-menu'}>
-					<ul className='nav-menu-items' onClick={showSidebar}>
+					<ul className='nav-menu-items' onClick={toggleSidebar}>
 						<li className='navbar-toggle'>
 							<Link to='#' className='menu-bars'>
 								<CgClose color='#524f5f' />
@@ -31,7 +30,7 @@ function Sidebar() {
 							return (
 								<>
 									<h3 className={category.cName}>{category.title}</h3>
-									<ul>
+									<ul className='categories'>
 										{category.items.map((item, index) => {
 											return (
 												<li key={index} className={item.cName}>

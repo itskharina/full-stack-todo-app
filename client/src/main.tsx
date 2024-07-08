@@ -5,6 +5,10 @@ import Upcoming from './routes/Upcoming';
 import Week from './routes/Week';
 import App from './App';
 import Work from './routes/Work';
+import { Provider } from 'react-redux';
+import store from './store/store';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import { SidebarProvider } from './components/Sidebar/SidebarContext';
 
 const router = createBrowserRouter([
 	{
@@ -30,4 +34,10 @@ const router = createBrowserRouter([
 	},
 ]);
 
-createRoot(document.getElementById('root')!).render(<RouterProvider router={router} />);
+createRoot(document.getElementById('root')!).render(
+	<Provider store={store}>
+		<SidebarProvider>
+			<RouterProvider router={router} />
+		</SidebarProvider>
+	</Provider>
+);

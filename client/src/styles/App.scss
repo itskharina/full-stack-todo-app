@@ -1,5 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 
+$borderColour: #59556d;
+
 * {
 	box-sizing: border-box;
 	margin: 0;
@@ -9,13 +11,46 @@
 
 .week,
 .upcoming,
-.today,
-.work {
+.work,
+.today {
 	display: flex;
 	height: 100vh;
+	flex-direction: column;
 	align-items: center;
 	justify-content: center;
 	font-size: 3rem;
 	background-color: #f1eef7;
 	color: black;
+	transition: padding-left 0.4s ease;
+}
+
+.sidebar-open {
+	padding-left: 250px;
+}
+
+button.accordion-button:not(.collapsed) {
+	background-color: inherit;
+	box-shadow: none;
+	color: inherit;
+}
+
+button.accordion-button:focus {
+	box-shadow: none;
+}
+
+div.accordion-item:not(:first-of-type) {
+	border-top: 1px solid $borderColour;
+}
+
+button.accordion-button {
+	border-radius: 10px;
+}
+
+div.accordion-item {
+	border: 1px solid $borderColour;
+}
+
+.accordion-item:first-of-type > .accordion-header .accordion-button,
+.accordion-item:last-of-type > .accordion-header .accordion-button.collapsed {
+	border-radius: 10px !important;
 }
