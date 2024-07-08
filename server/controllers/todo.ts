@@ -3,8 +3,10 @@ import Todo from '../models/todo.js';
 import { Request, Response, NextFunction } from 'express';
 
 interface TodoRequestBody {
+	title: string;
 	todo: string;
-	important?: boolean;
+	dueDate?: string;
+	priority: string;
 }
 
 const getTodos = async (
@@ -31,14 +33,16 @@ const createTodo = async (
 	try {
 		const body = req.body as TodoRequestBody;
 
-		if (!body.todo) {
+		if (!body.todo || !body.title) {
 			return res.status(400).json({
 				error: 'Content missing',
 			});
 		}
 		const todo = new Todo({
+			title: body.title,
 			todo: body.todo,
-			important: body.important === undefined ? false : body.important,
+			dueDate: body.dueDate, // Include dueDate
+			priority: body.priority, // Include priority,
 		});
 
 		console.log('About to save todo:', todo);
@@ -77,13 +81,15 @@ const updateTodo = async (
 	try {
 		const body = req.body as TodoRequestBody;
 
-		if (!body.todo) {
+		if (!body.todo || !body.title) {
 			return res.status(400).json({ error: 'Content cannot be empty' });
 		}
 
 		const todo = {
+			title: body.title,
 			todo: body.todo,
-			important: body.important,
+			dueDate: body.dueDate, // Include dueDate
+			priority: body.priority, // Include priority
 		};
 
 		const updatedTodo = await Todo.findByIdAndUpdate(req.params.id, todo, { new: true });

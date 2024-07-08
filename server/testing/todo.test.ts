@@ -30,8 +30,10 @@ describe('GET /todos', () => {
 describe('POST /todos', () => {
 	it('post request works', async () => {
 		const testTodo = {
+			title: 'Testing!',
 			todo: 'Test Todo',
-			important: true,
+			dueDate: '08/08/2024',
+			priority: 'high',
 		};
 
 		const response = await api
@@ -39,14 +41,35 @@ describe('POST /todos', () => {
 			.set('Content-Type', 'application/json')
 			.send(testTodo);
 		expect(response.status).toBe(201);
+		expect(response.body.title).toEqual('Testing!');
 		expect(response.body.todo).toEqual('Test Todo');
-		expect(response.body.important).toEqual(true);
+		expect(response.body.dueDate).toEqual('08/08/2024');
+		expect(response.body.priority).toEqual('high');
 	});
 
 	it('should return 400 when content of todo is missing', async () => {
 		const response = await api.post('/todos').send({});
 		expect(response.status).toBe(400);
 		expect(response.body).toEqual({ error: 'Content missing' });
+	});
+
+	it('should still do put request even when due date is empty', async () => {
+		const testTodo = {
+			title: 'Testing!',
+			todo: 'Test Todo',
+			dueDate: '',
+			priority: 'high',
+		};
+
+		const response = await api
+			.post('/todos')
+			.set('Content-Type', 'application/json')
+			.send(testTodo);
+		expect(response.status).toBe(201);
+		expect(response.body.title).toEqual('Testing!');
+		expect(response.body.todo).toEqual('Test Todo');
+		expect(response.body.dueDate).toEqual('');
+		expect(response.body.priority).toEqual('high');
 	});
 });
 
@@ -56,8 +79,10 @@ describe('/DELETE todos/id', () => {
 	beforeEach(async () => {
 		// Create a new todo before each test in this suite
 		const testTodo = {
+			title: 'Deleting!',
 			todo: 'Test Todo for Deletion',
-			important: true,
+			dueDate: '20/10/2024',
+			priority: 'low',
 		};
 
 		const response = await api
@@ -87,14 +112,18 @@ describe('/PUT todos/id', () => {
 	let testTodoId: string;
 
 	const updateTodo = {
+		title: 'Updating!',
 		todo: 'Updated Todo',
-		important: true,
+		dueDate: '',
+		priority: 'none',
 	};
 
 	beforeEach(async () => {
 		const testTodo = {
+			title: 'Updating!',
 			todo: 'Test Todo to Update',
-			important: true,
+			dueDate: '08/08/2024',
+			priority: 'medium',
 		};
 
 		const response = await api
@@ -110,8 +139,10 @@ describe('/PUT todos/id', () => {
 	it('put request works', async () => {
 		const response = await api.put(`/todos/${testTodoId}`).send(updateTodo);
 		expect(response.status).toBe(200);
+		expect(response.body.title).toEqual('Updating!');
 		expect(response.body.todo).toEqual('Updated Todo');
-		expect(response.body.important).toEqual(true);
+		expect(response.body.dueDate).toEqual('');
+		expect(response.body.priority).toEqual('none');
 	});
 
 	it("error message displays if ID doesn't exist", async () => {
@@ -120,10 +151,12 @@ describe('/PUT todos/id', () => {
 		expect(response.body).toEqual({ error: 'Malformatted id' });
 	});
 
-	it('error message displays if toto content is empty', async () => {
+	it('error message displays if todo content is empty', async () => {
 		const emptyTodo = {
+			title: 'Empty Content',
 			todo: '',
-			important: true,
+			dueDate: '08/08/2024',
+			priority: 'high',
 		};
 
 		const response = await api.put(`/todos/${testTodoId}`).send(emptyTodo);

@@ -1,17 +1,31 @@
 import mongoose, { Document, Schema } from 'mongoose';
 
 interface ITodo extends Document {
+	title: string;
 	todo: string;
-	important?: boolean;
+	dueDate?: string;
+	priority: string;
 	// user: mongoose.Types.ObjectId | null;
 }
 
 const todoSchema: Schema = new Schema<ITodo>({
+	title: {
+		type: String,
+		required: true,
+	},
 	todo: {
 		type: String,
 		required: true,
 	},
-	important: Boolean,
+	dueDate: {
+		type: String,
+		required: false,
+	},
+	priority: {
+		type: String,
+		enum: ['none', 'high', 'medium', 'low'],
+		required: true,
+	},
 	// user: {
 	// 	type: mongoose.Schema.Types.ObjectId,
 	// 	ref: 'User',
