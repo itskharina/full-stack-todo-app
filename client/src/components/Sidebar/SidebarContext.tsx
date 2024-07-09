@@ -1,4 +1,3 @@
-// SidebarContext.js
 import React, { createContext, useContext, useState } from 'react';
 
 // Define a type for the context value
@@ -7,8 +6,10 @@ interface SidebarContextType {
 	toggleSidebar: () => void;
 }
 
-// Provide a default value for the context
-const SidebarContext = createContext<SidebarContextType | undefined>(undefined);
+const SidebarContext = createContext<SidebarContextType>({
+	sidebar: false,
+	toggleSidebar: () => {},
+});
 
 export const useSidebar = () => useContext(SidebarContext);
 

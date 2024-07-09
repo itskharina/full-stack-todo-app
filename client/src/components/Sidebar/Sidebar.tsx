@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { FaBars } from 'react-icons/fa6';
 import { CgClose } from 'react-icons/cg';
 import { Link } from 'react-router-dom';
@@ -8,13 +7,17 @@ import { IconContext } from 'react-icons';
 import { useSidebar } from './SidebarContext.js';
 
 function Sidebar() {
-	const { sidebar, toggleSidebar } = useSidebar(); // Use the hook to get sidebar state and toggle function
+	const { sidebar, toggleSidebar } = useSidebar();
 
 	return (
 		<>
 			<IconContext.Provider value={{ color: 'undefined' }}>
 				<div className='navbar'>
-					<button className='menu-bars' onClick={toggleSidebar}>
+					<button
+						className='menu-bars'
+						onClick={toggleSidebar}
+						aria-label='Toggle sidebar'
+					>
 						<FaBars color='white' />
 					</button>
 				</div>
