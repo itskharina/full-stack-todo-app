@@ -1,4 +1,4 @@
-name: Test Backend
+name: Lint and Test Code
 
 on:
   push:

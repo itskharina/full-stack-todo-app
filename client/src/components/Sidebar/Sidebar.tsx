@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { SidebarData } from './SidebarData.js';
 import '../../styles/Sidebar.scss';
 import { IconContext } from 'react-icons';
-import { useSidebar } from './SidebarContext.js';
+import { useSidebar } from './SidebarProvider.js';
 
 function Sidebar() {
 	const { sidebar, toggleSidebar } = useSidebar();

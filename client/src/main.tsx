@@ -8,7 +8,7 @@ import Work from './routes/Work';
 import { Provider } from 'react-redux';
 import store from './store/store';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { SidebarProvider } from './components/Sidebar/SidebarContext';
+import { SidebarProvider } from './components/Sidebar/SidebarProvider';
 
 const router = createBrowserRouter([
 	{

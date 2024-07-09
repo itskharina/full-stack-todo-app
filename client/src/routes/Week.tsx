@@ -1,4 +1,4 @@
-import { useSidebar } from '../components/Sidebar/SidebarContext';
+import { useSidebar } from '../components/Sidebar/SidebarProvider';
 
 const Week = () => {
 	const { sidebar } = useSidebar();

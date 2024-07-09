@@ -1,4 +1,4 @@
-import { useSidebar } from '../components/Sidebar/SidebarContext';
+import { useSidebar } from '../components/Sidebar/SidebarProvider';
 
 const Today = () => {
 	const { sidebar } = useSidebar();

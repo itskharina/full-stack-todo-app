@@ -1,18 +1,19 @@
-import { useSelector, useDispatch } from 'react-redux';
+// import { useSelector, useDispatch } from 'react-redux';
 import { useEffect } from 'react';
 import todoService from '../services/todos';
 import { setTodos } from '../store/todoSlice';
-import { useSidebar } from '../components/Sidebar/SidebarContext';
+import { useSidebar } from '../components/Sidebar/SidebarProvider';
 import Accordion from 'react-bootstrap/Accordion';
+import { useAppSelector, useAppDispatch } from '../hooks';
 
 const Upcoming = () => {
 	const { sidebar } = useSidebar();
-	const dispatch = useDispatch();
+	const dispatch = useAppDispatch();
 	useEffect(() => {
 		todoService.getTodos().then((notes) => dispatch(setTodos(notes)));
-	}, []);
+	});
 
-	const todos = useSelector((state) => state.todo);
+	const todos = useAppSelector((state) => state.todo);
 
 	return (
 		<div className={`upcoming ${sidebar ? 'sidebar-open' : ''}`}>
