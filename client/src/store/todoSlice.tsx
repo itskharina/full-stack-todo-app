@@ -7,14 +7,7 @@ export interface ITodo {
 	priority: string;
 }
 
-const initialState: ITodo[] = [
-	{
-		title: 'Initial Todo',
-		todo: 'Welcome!',
-		dueDate: '08/08/2002',
-		priority: 'low',
-	},
-];
+const initialState: ITodo[] = [];
 
 const todoSlice = createSlice({
 	name: 'todos',
