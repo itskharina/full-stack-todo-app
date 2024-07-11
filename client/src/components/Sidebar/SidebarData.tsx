@@ -1,4 +1,5 @@
 import * as FaIcons from 'react-icons/fa';
+import { GoPlus } from 'react-icons/go';
 
 export const SidebarData = [
 	{
@@ -29,6 +30,11 @@ export const SidebarData = [
 		title: 'Projects',
 		cName: 'projects-title',
 		items: [
+			{
+				title: 'Create new project',
+				cName: 'nav-text',
+				icon: <GoPlus />,
+			},
 			{
 				title: 'Work',
 				path: '/work',

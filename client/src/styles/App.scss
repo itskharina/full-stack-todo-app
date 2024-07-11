@@ -1,6 +1,13 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 
-// $borderColour: #59556d;
+$backgroundColour: #f1eef7;
+$secondColour: #59556d;
+
+@mixin flex($direction) {
+	display: flex;
+	flex-direction: $direction;
+	align-items: center;
+}
 
 * {
 	box-sizing: border-box;
@@ -13,13 +20,11 @@
 .upcoming,
 .work,
 .today {
-	display: flex;
+	// @include flex(column);
 	height: 100vh;
-	flex-direction: column;
-	align-items: center;
 	justify-content: center;
 	font-size: 3rem;
-	background-color: #f1eef7;
+	background-color: $backgroundColour;
 	color: black;
 	transition: padding-left 0.4s ease;
 }
@@ -28,58 +33,62 @@
 	padding-left: 250px;
 }
 
-div.card-header {
-	border-bottom: 0;
-	background-color: white;
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	height: 50px;
-}
-
-div.card-header:first-child {
-	border-radius: 10px;
-}
-
 div.card {
 	border-radius: 10px;
 	border: 0.5px solid black;
-}
+	--bs-card-bg: $backgroundColour;
 
-button.info-btn {
-	border: 0;
-	background-color: transparent;
-}
+	.card-header {
+		@include flex(row);
+		border-bottom: 0;
+		background-color: $backgroundColour;
+		justify-content: space-between;
+		height: 50px;
+	}
+	.left {
+		@include flex(row);
 
-input[type='checkbox'] {
-	transform: scale(1.4);
-}
+		input[type='checkbox'] {
+			transform: scale(1.4);
+		}
+	}
 
-.left {
-	display: flex;
-	align-items: center;
-}
+	.right {
+		@extend .left;
+		gap: 20px;
 
-.right {
-	display: flex;
-	align-items: center;
-	gap: 8px;
-}
+		.due-date,
+		.priority {
+			margin: 0;
+		}
 
-.due-date,
-.priority {
-	margin: 0;
+		.info-btn {
+			border: 0;
+			background-color: transparent;
+		}
+	}
+
+	.card-header:first-child {
+		border-radius: 10px;
+	}
 }
 
 .description {
 	font-size: 16px;
 }
 
-svg {
+img {
 	width: 20px;
 	height: 100%;
 	display: flex;
+}
+
+svg {
+	@extend img;
 	cursor: pointer;
+}
+
+.dropdown > a > svg {
 	color: black;
 }
 
@@ -87,29 +96,35 @@ span {
 	font-size: 16px;
 }
 
-// button.accordion-button:not(.collapsed) {
-// 	background-color: inherit;
-// 	box-shadow: none;
-// 	color: inherit;
-// }
+.accordion {
+	width: 60%;
+	margin: 0 auto;
+	padding-top: 0.7rem;
+}
 
-// button.accordion-button:focus {
-// 	box-shadow: none;
-// }
+div.modal-content {
+	background-color: $backgroundColour;
 
-// div.accordion-item:not(:first-of-type) {
-// 	border-top: 1.5px solid $borderColour;
-// }
+	.modal-header {
+		border-bottom: 0;
+	}
 
-// button.accordion-button {
-// 	border-radius: 10px;
-// }
+	.modal-title {
+		color: $secondColour;
+	}
 
-// div.accordion-item {
-// 	border: 1.5px solid $borderColour;
-// }
+	.form-label {
+		color: $secondColour;
+		font-weight: 500;
+		font-size: 17px;
+	}
 
-// .accordion-item:first-of-type > .accordion-header .accordion-button,
-// .accordion-item:last-of-type > .accordion-header .accordion-button.collapsed {
-// 	border-radius: 10px !important;
-// }
+	.form-control {
+		background-color: #d1cde6;
+		border: none;
+
+		// &:focus {
+		// 	box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+		// }
+	}
+}

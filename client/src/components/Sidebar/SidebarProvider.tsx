@@ -1,6 +1,5 @@
 import React, { createContext, useContext, useState } from 'react';
 
-// Define a type for the context value
 interface SidebarContextType {
 	sidebar: boolean;
 	toggleSidebar: () => void;
