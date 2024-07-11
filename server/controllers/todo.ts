@@ -5,7 +5,7 @@ import { Request, Response, NextFunction } from 'express';
 interface TodoRequestBody {
 	title: string;
 	todo: string;
-	dueDate?: string;
+	dueDate?: Date;
 	priority: string;
 }
 

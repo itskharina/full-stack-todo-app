@@ -6,9 +6,9 @@ POST http://localhost:3001/todos
 Content-Type: application/json
 
 {		
-		"title": "hi",
-		"todo": "lol",
-		"dueDate": "22/12/2024",
+		"title": "test date again",
+		"todo": "yay",
+		"dueDate": "2024-05-24",
 		"priority": "medium"
 }
 
@@ -26,7 +26,7 @@ Content-Type: application/json
 
 ###
 // do GET request and take an ID from there first
-DELETE http://localhost:3001/todos/668bdb108c3a8788c1b4b923
+DELETE http://localhost:3001/todos/668ee926518aa0ccb4bcd469
 
 ###
 

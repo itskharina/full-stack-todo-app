@@ -3,7 +3,7 @@ import mongoose, { Document, Schema } from 'mongoose';
 interface ITodo extends Document {
 	title: string;
 	todo: string;
-	dueDate?: string;
+	dueDate?: Date;
 	priority: string;
 	// user: mongoose.Types.ObjectId | null;
 }
@@ -18,7 +18,7 @@ const todoSchema: Schema = new Schema<ITodo>({
 		required: true,
 	},
 	dueDate: {
-		type: String,
+		type: Date,
 		required: false,
 	},
 	priority: {
