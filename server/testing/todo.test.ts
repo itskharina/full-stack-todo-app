@@ -32,7 +32,7 @@ describe('POST /todos', () => {
 		const testTodo = {
 			title: 'Testing!',
 			todo: 'Test Todo',
-			dueDate: '08/08/2024',
+			dueDate: '2024-08-08',
 			priority: 'high',
 		};
 
@@ -43,7 +43,7 @@ describe('POST /todos', () => {
 		expect(response.status).toBe(201);
 		expect(response.body.title).toEqual('Testing!');
 		expect(response.body.todo).toEqual('Test Todo');
-		expect(response.body.dueDate).toEqual('08/08/2024');
+		expect(response.body.dueDate).toEqual('2024-08-08T00:00:00.000Z');
 		expect(response.body.priority).toEqual('high');
 	});
 
@@ -68,7 +68,7 @@ describe('POST /todos', () => {
 		expect(response.status).toBe(201);
 		expect(response.body.title).toEqual('Testing!');
 		expect(response.body.todo).toEqual('Test Todo');
-		expect(response.body.dueDate).toEqual('');
+		expect(response.body.dueDate).toEqual(null);
 		expect(response.body.priority).toEqual('high');
 	});
 });
@@ -81,7 +81,7 @@ describe('/DELETE todos/id', () => {
 		const testTodo = {
 			title: 'Deleting!',
 			todo: 'Test Todo for Deletion',
-			dueDate: '20/10/2024',
+			dueDate: '2024-10-04',
 			priority: 'low',
 		};
 
@@ -122,7 +122,7 @@ describe('/PUT todos/id', () => {
 		const testTodo = {
 			title: 'Updating!',
 			todo: 'Test Todo to Update',
-			dueDate: '08/08/2024',
+			dueDate: '2024-08-08',
 			priority: 'medium',
 		};
 
@@ -141,7 +141,7 @@ describe('/PUT todos/id', () => {
 		expect(response.status).toBe(200);
 		expect(response.body.title).toEqual('Updating!');
 		expect(response.body.todo).toEqual('Updated Todo');
-		expect(response.body.dueDate).toEqual('');
+		expect(response.body.dueDate).toEqual(null);
 		expect(response.body.priority).toEqual('none');
 	});
 
@@ -155,7 +155,7 @@ describe('/PUT todos/id', () => {
 		const emptyTodo = {
 			title: 'Empty Content',
 			todo: '',
-			dueDate: '08/08/2024',
+			dueDate: '2024-08-08',
 			priority: 'high',
 		};
 
