@@ -5,13 +5,21 @@ import { SidebarData } from './SidebarData.js';
 import '../../styles/Sidebar.scss';
 import { IconContext } from 'react-icons';
 import { useSidebar } from './SidebarProvider.js';
+import projectService from '../../services/project.js';
 
 import Modal, { ModalProps } from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import * as FaIcons from 'react-icons/fa';
 
 const MyVerticallyCenteredModal = (props: ModalProps) => {
+	const [inputValue, setInputValue] = useState('');
+
+	function handleSubmit() {
+		console.log(inputValue);
+	}
+
 	return (
 		<Modal {...props} size='lg' aria-labelledby='contained-modal-title-vcenter' centered>
 			<Modal.Header closeButton>
@@ -21,12 +29,22 @@ const MyVerticallyCenteredModal = (props: ModalProps) => {
 				<Form>
 					<Form.Group className='mb-3' controlId='exampleForm.ControlInput1'>
 						<Form.Label>Name</Form.Label>
-						<Form.Control type='text' autoFocus />
+						<Form.Control
+							type='text'
+							autoFocus
+							onChange={(e) => setInputValue(e.target.value)}
+						/>
 					</Form.Group>
 				</Form>
 			</Modal.Body>
 			<Modal.Footer>
-				<Button variant='primary' onClick={props.onHide}>
+				<Button
+					variant='primary'
+					onClick={() => {
+						handleSubmit();
+						props.onHide();
+					}}
+				>
 					Save Changes
 				</Button>
 				<Button variant='secondary' onClick={props.onHide}>
@@ -40,6 +58,29 @@ const MyVerticallyCenteredModal = (props: ModalProps) => {
 function Sidebar() {
 	const { sidebar, toggleSidebar } = useSidebar();
 	const [isModalOpen, setIsModalOpen] = useState(false);
+
+	useEffect(() => {
+		const fetchProjects = async () => {
+			const projects = await projectService.getProjects();
+			const projectsCategory = SidebarData.find(
+				(category) => category.title === 'Projects'
+			);
+			if (projectsCategory) {
+				projectsCategory.items = [
+					...projectsCategory.items.slice(0, 1), // Keep the 'Create new project' item
+					...projects.map((project) => {
+						return {
+							title: project.name,
+							path: `/projects/${project.name.toLowerCase()}/${project._id}`,
+							icon: <FaIcons.FaClipboardList />,
+							cName: 'nav-text',
+						};
+					}),
+				];
+			}
+		};
+		fetchProjects();
+	}, []);
 
 	return (
 		<>

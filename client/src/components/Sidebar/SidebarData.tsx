@@ -35,12 +35,6 @@ export const SidebarData = [
 				cName: 'nav-text',
 				icon: <GoPlus />,
 			},
-			{
-				title: 'Work',
-				path: '/work',
-				icon: <FaIcons.FaClipboardList />,
-				cName: 'nav-text',
-			},
 		],
 	},
 ];

@@ -4,7 +4,7 @@ import Today from './routes/Today';
 import Upcoming from './routes/Upcoming';
 import Week from './routes/Week';
 import App from './App';
-import Work from './routes/Work';
+import Project from './routes/Project';
 import { Provider } from 'react-redux';
 import store from './store/store';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -27,8 +27,8 @@ const router = createBrowserRouter([
 				element: <Week />,
 			},
 			{
-				path: 'work',
-				element: <Work />,
+				path: 'projects/:projectName/:projectId',
+				element: <Project />,
 			},
 		],
 	},

@@ -8,6 +8,10 @@ const errorHandler = (err: Error, _req: Request, res: Response, _next: NextFunct
 		return res.status(500).json({ error: 'Error getting tasks' });
 	} else if (err.message === 'Error adding task') {
 		return res.status(500).json({ error: 'Error adding task' });
+	} else if (err.message === 'Error getting projects') {
+		return res.status(500).json({ error: 'Error getting projects' });
+	} else if (err.message === 'Error adding projects') {
+		return res.status(500).json({ error: 'Error adding projects' });
 	} else if (err.name === 'CastError') {
 		return res.status(400).json({ error: 'Malformatted id' });
 	} else if (err.name === 'ValidationError') {

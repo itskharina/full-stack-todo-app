@@ -5,6 +5,7 @@ export interface ITodo {
 	todo: string;
 	dueDate?: string;
 	priority: string;
+	project: string | null;
 }
 
 const initialState: ITodo[] = [];

@@ -71,6 +71,36 @@ describe('POST /todos', () => {
 		expect(response.body.dueDate).toEqual(null);
 		expect(response.body.priority).toEqual('high');
 	});
+
+	it.only('should add the todo to a project', async () => {
+		// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+		const testProjectId: string = (
+			await api
+				.post('/projects')
+				.set('Content-Type', 'application/json')
+				.send({ name: 'Testing!' })
+		).body.id.toString();
+
+		const testTodo = {
+			title: 'Testing!',
+			todo: 'Test Todo',
+			dueDate: '2024-08-08',
+			priority: 'high',
+			project: testProjectId,
+		};
+
+		const todoResponse = await api
+			.post('/todos')
+			.set('Content-Type', 'application/json')
+			.send(testTodo);
+
+		expect(todoResponse.status).toBe(201);
+		expect(todoResponse.body.title).toEqual('Testing!');
+		expect(todoResponse.body.todo).toEqual('Test Todo');
+		expect(todoResponse.body.dueDate).toEqual('2024-08-08T00:00:00.000Z');
+		expect(todoResponse.body.priority).toEqual('high');
+		expect(todoResponse.body.project).toEqual(testProjectId);
+	});
 });
 
 describe('/DELETE todos/id', () => {

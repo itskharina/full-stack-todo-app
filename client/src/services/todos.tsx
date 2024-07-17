@@ -1,3 +1,5 @@
+import { ITodo } from '../store/todoSlice';
+
 const baseUrl = 'http://localhost:3001/todos';
 
 const getTodos = async () => {
@@ -13,17 +15,25 @@ const getTodos = async () => {
 	}
 };
 
-// const create = (newObject) => {
-// 	const request = fetch(baseUrl, {
-// 		method: 'POST',
+const createTodo = async (newObject: ITodo) => {
+	try {
+		const response = await fetch(baseUrl, {
+			method: 'POST',
 
-// 		body: JSON.stringify(newObject),
-// 		headers: {
-// 			'Content-type': 'application/json; charset=UTF-8',
-// 		},
-// 	});
-// 	return request.then((response) => response.json());
-// };
+			body: JSON.stringify(newObject),
+			headers: {
+				'Content-type': 'application/json; charset=UTF-8',
+			},
+		});
+		if (!response.ok) {
+			throw new Error(`HTTP error! status: ${response.status}`);
+		}
+		return await response.json();
+	} catch (error) {
+		console.error('Error creating todo:', error);
+		throw error;
+	}
+};
 
 // const deleteTodo = (id) => {
 // 	const request = fetch(`${baseUrl}/${id}`, {
@@ -33,4 +43,4 @@ const getTodos = async () => {
 // 	return request;
 // };
 
-export default { getTodos };
+export default { getTodos, createTodo };

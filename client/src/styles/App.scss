@@ -19,7 +19,8 @@ $secondColour: #59556d;
 .week,
 .upcoming,
 .work,
-.today {
+.today,
+.project {
 	// @include flex(column);
 	height: 100vh;
 	justify-content: center;
@@ -126,5 +127,41 @@ div.modal-content {
 		// &:focus {
 		// 	box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
 		// }
+	}
+}
+
+div.dropdown-menu {
+	--bs-dropdown-link-hover-bg: #e2dfeb;
+	box-shadow: 0 0 8px rgba(0, 0, 0, 0.12);
+	border-radius: 10px;
+	padding: 7px;
+	background-color: $backgroundColour;
+}
+
+a.dropdown-item {
+	background-color: $backgroundColour;
+	padding: 10px;
+	border-radius: 5px;
+}
+
+a.dropdown-item.active,
+a.dropdown-item:active {
+	color: inherit;
+	background-color: #e2dfeb;
+}
+
+h1 {
+	color: #59556d;
+	padding: 1rem 1rem 1rem 17rem;
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	font-size: 45px;
+
+	.todos-length {
+		font-size: 25px;
+		padding: 0.7rem 1rem;
+		border: 1px solid #59556d;
+		border-radius: 10px;
 	}
 }

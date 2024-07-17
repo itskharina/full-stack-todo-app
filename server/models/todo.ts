@@ -5,7 +5,8 @@ interface ITodo extends Document {
 	todo: string;
 	dueDate?: Date;
 	priority: string;
-	// user: mongoose.Types.ObjectId | null;
+	project: mongoose.Types.ObjectId | null;
+	// user: mongoose.Types.ObjectId;
 }
 
 const todoSchema: Schema = new Schema<ITodo>({
@@ -25,6 +26,11 @@ const todoSchema: Schema = new Schema<ITodo>({
 		type: String,
 		enum: ['none', 'high', 'medium', 'low'],
 		required: true,
+	},
+	project: {
+		type: mongoose.Schema.Types.ObjectId,
+		ref: 'Project',
+		required: false,
 	},
 	// user: {
 	// 	type: mongoose.Schema.Types.ObjectId,

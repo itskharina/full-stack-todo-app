@@ -10,7 +10,6 @@ import Card from 'react-bootstrap/Card';
 import { FaInfoCircle } from 'react-icons/fa';
 import { BsThreeDots } from 'react-icons/bs';
 import Dropdown from 'react-bootstrap/Dropdown';
-import '../styles/Upcoming.scss';
 
 import redFlag from '../assets/redflag.png';
 import orangeFlag from '../assets/orangeflag.png';

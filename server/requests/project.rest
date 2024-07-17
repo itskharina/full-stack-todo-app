@@ -1,0 +1,27 @@
+GET http://localhost:3001/projects
+
+###
+
+GET http://localhost:3001/projects/6695c05c1889af8a171b2dd7
+
+###
+
+POST http://localhost:3001/projects
+Content-Type: application/json
+
+{		
+		"name": "School"
+}
+
+###
+
+POST http://localhost:3001/projects
+Content-Type: application/json
+
+{		
+		"name": "Test"
+}
+
+###
+
+DELETE http://localhost:3001/projects/6695c0901889af8a171b2dda
