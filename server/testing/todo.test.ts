@@ -72,7 +72,7 @@ describe('POST /todos', () => {
 		expect(response.body.priority).toEqual('high');
 	});
 
-	it.only('should add the todo to a project', async () => {
+	it('should add the todo to a project', async () => {
 		// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 		const testProjectId: string = (
 			await api
