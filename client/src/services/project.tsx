@@ -17,9 +17,9 @@ const getProjects = async () => {
 	}
 };
 
-const getProjectById = async (projectId: string) => {
+const getProjectByName = async (projectName: string) => {
 	try {
-		const response = await fetch(`${baseUrl}/${projectId}`);
+		const response = await fetch(`${baseUrl}/${projectName}`);
 		if (!response.ok) {
 			throw new Error(`HTTP error! status: ${response.status}`);
 		}
@@ -52,6 +52,6 @@ const createProject = async (newObject: IProject) => {
 
 export default {
 	getProjects,
-	getProjectById,
+	getProjectByName,
 	createProject,
 };

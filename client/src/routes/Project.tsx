@@ -58,23 +58,24 @@ const CustomDropDown = forwardRef<HTMLAnchorElement, CustomDropDownProps>(
 const Project = () => {
 	const { sidebar } = useSidebar();
 
-	const { projectId } = useParams();
-	console.log(projectId);
+	const { projectName } = useParams();
+	console.log(projectName);
+
 	const [project, setProject] = useState<{
-		// _id: string;
 		name: string;
 		todos: ITodo[];
 	} | null>(null);
 
 	useEffect(() => {
 		const fetchProject = async () => {
-			if (projectId) {
-				const project = await projectService.getProjectById(projectId);
+			if (projectName) {
+				const project = await projectService.getProjectByName(projectName);
+				console.log(project);
 				setProject(project);
 			}
 		};
 		fetchProject();
-	}, [projectId]);
+	}, [projectName]);
 
 	if (!project) {
 		return <div>Loading...</div>;

@@ -27,7 +27,7 @@ const router = createBrowserRouter([
 				element: <Week />,
 			},
 			{
-				path: 'projects/:projectName/:projectId',
+				path: 'projects/:projectName',
 				element: <Project />,
 			},
 		],

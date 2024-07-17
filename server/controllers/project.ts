@@ -21,13 +21,15 @@ const getProjects = async (
 	}
 };
 
-const getProjectById = async (
+const getProjectByName = async (
 	req: Request,
 	res: Response,
 	next: NextFunction
 ): Promise<Response | void> => {
 	try {
-		const project = await Project.findById(req.params.id).populate('todos');
+		const project = await Project.findOne({
+			name: { $regex: req.params.name, $options: 'i' },
+		}).populate('todos');
 		if (!project) {
 			return res.status(404).json({ error: 'Project not found' });
 		}
@@ -88,7 +90,7 @@ const deleteProject = async (
 
 export default {
 	getProjects,
-	getProjectById,
+	getProjectByName,
 	createProject,
 	deleteProject,
 };

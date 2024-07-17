@@ -2,7 +2,7 @@ GET http://localhost:3001/projects
 
 ###
 
-GET http://localhost:3001/projects/6695c05c1889af8a171b2dd7
+GET http://localhost:3001/projects/school
 
 ###
 

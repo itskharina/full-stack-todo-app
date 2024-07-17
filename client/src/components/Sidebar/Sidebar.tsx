@@ -70,10 +70,10 @@ function Sidebar() {
 			if (projectsCategory) {
 				projectsCategory.items = [
 					...projectsCategory.items.slice(0, 1), // Keep the 'Create new project' item
-					...projects.map((project: { name: string; _id: string }) => {
+					...projects.map((project: { name: string }) => {
 						return {
 							title: project.name,
-							path: `/projects/${project.name.toLowerCase()}/${project._id}`,
+							path: `/projects/${project.name.toLowerCase()}`,
 							icon: <FaIcons.FaClipboardList />,
 							cName: 'nav-text',
 						};
