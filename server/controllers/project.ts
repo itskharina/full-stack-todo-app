@@ -25,7 +25,7 @@ const getProjectById = async (
 	req: Request,
 	res: Response,
 	next: NextFunction
-): Promise<void> => {
+): Promise<Response | void> => {
 	try {
 		const project = await Project.findById(req.params.id).populate('todos');
 		if (!project) {

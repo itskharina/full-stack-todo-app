@@ -59,7 +59,7 @@ const createTodo = async (
 			if (!project) {
 				return res.status(400).json({ error: 'Project not found' });
 			}
-			project.todos.push(todo._id);
+			project.todos.push(todo._id as Types.ObjectId);
 			await project.save();
 		}
 
@@ -128,7 +128,7 @@ const updateTodo = async (
 			if (newProject) {
 				newProject.todos.push(existingTodo._id as Types.ObjectId);
 				await newProject.save();
-				existingTodo.project = newProject._id;
+				existingTodo.project = newProject._id as Types.ObjectId;
 			}
 		} else {
 			existingTodo.project = null;
