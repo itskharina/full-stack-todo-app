@@ -1,7 +1,20 @@
 import * as FaIcons from 'react-icons/fa';
 import { GoPlus } from 'react-icons/go';
 
-export const SidebarData = [
+interface SidebarItem {
+	title: string;
+	path?: string;
+	icon: React.ReactElement;
+	cName: string;
+}
+
+interface SidebarCategory {
+	title: string;
+	cName: string;
+	items: SidebarItem[];
+}
+
+export const SidebarData: SidebarCategory[] = [
 	{
 		title: 'Tasks',
 		cName: 'tasks-title',

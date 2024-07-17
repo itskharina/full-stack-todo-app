@@ -18,6 +18,9 @@ const MyVerticallyCenteredModal = (props: ModalProps) => {
 
 	function handleSubmit() {
 		console.log(inputValue);
+		if (props.onHide) {
+			props.onHide();
+		}
 	}
 
 	return (
@@ -42,7 +45,6 @@ const MyVerticallyCenteredModal = (props: ModalProps) => {
 					variant='primary'
 					onClick={() => {
 						handleSubmit();
-						props.onHide();
 					}}
 				>
 					Save Changes
@@ -68,7 +70,7 @@ function Sidebar() {
 			if (projectsCategory) {
 				projectsCategory.items = [
 					...projectsCategory.items.slice(0, 1), // Keep the 'Create new project' item
-					...projects.map((project) => {
+					...projects.map((project: { name: string; _id: string }) => {
 						return {
 							title: project.name,
 							path: `/projects/${project.name.toLowerCase()}/${project._id}`,
