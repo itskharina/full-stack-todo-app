@@ -78,7 +78,6 @@ const deleteTodo = async (
 	next: NextFunction
 ): Promise<void> => {
 	try {
-		// Find the todo by its ID and populate the project field
 		const todo = await Todo.findById(req.params.id).populate('project');
 		if (todo?.project) {
 			await Project.updateOne({ _id: todo.project }, { $pull: { todos: todo._id } });
@@ -113,9 +112,7 @@ const updateTodo = async (
 		existingTodo.dueDate = body.dueDate;
 		existingTodo.priority = body.priority;
 
-		// Handle project association
 		if (body.project && body.project !== existingTodo.project?.toString()) {
-			// Remove from old project
 			if (existingTodo.project) {
 				await Project.updateOne(
 					{ _id: existingTodo.project.toString() },
@@ -123,7 +120,6 @@ const updateTodo = async (
 				);
 			}
 
-			// Add to new project
 			const newProject = await Project.findById(body.project);
 			if (newProject) {
 				newProject.todos.push(existingTodo._id as Types.ObjectId);

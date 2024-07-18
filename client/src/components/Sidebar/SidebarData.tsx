@@ -2,6 +2,7 @@ import * as FaIcons from 'react-icons/fa';
 import { GoPlus } from 'react-icons/go';
 
 interface SidebarItem {
+	id: string;
 	title: string;
 	path?: string;
 	icon: React.ReactElement;
@@ -24,18 +25,21 @@ export const SidebarData: SidebarCategory[] = [
 				path: '/',
 				icon: <FaIcons.FaInbox />,
 				cName: 'nav-text',
+				id: '',
 			},
 			{
 				title: 'Today',
 				path: '/today',
 				icon: <FaIcons.FaCalendarDay />,
 				cName: 'nav-text',
+				id: '',
 			},
 			{
 				title: 'This Week',
 				path: '/week',
 				icon: <FaIcons.FaCalendarWeek />,
 				cName: 'nav-text',
+				id: '',
 			},
 		],
 	},
@@ -47,6 +51,7 @@ export const SidebarData: SidebarCategory[] = [
 				title: 'Create new project',
 				cName: 'nav-text',
 				icon: <GoPlus />,
+				id: '',
 			},
 		],
 	},

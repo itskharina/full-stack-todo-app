@@ -10,10 +10,7 @@ const getProjects = async () => {
 		if (!response.ok) {
 			throw new Error(`HTTP error! status: ${response.status}`);
 		}
-		const projects = await response.json();
-		// const ids = projects.map((project: { id: any }) => project.id);
-		// console.log(projects);
-		return projects;
+		return await response.json();
 	} catch (error) {
 		console.error('Error fetching data:', error);
 		throw error;

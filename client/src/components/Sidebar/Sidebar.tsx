@@ -15,7 +15,7 @@ import Form from 'react-bootstrap/Form';
 import React, { useEffect, useState } from 'react';
 import * as FaIcons from 'react-icons/fa';
 
-const MyVerticallyCenteredModal = (props: ModalProps) => {
+const MyCreateProjectModal = (props: ModalProps) => {
 	const [inputValue, setInputValue] = useState('');
 
 	const handleSubmit = async () => {
@@ -96,7 +96,7 @@ const MyDeleteConfirmationModal = (props: ModalProps) => {
 				<Button
 					variant='danger'
 					onClick={() => {
-						handleDelete(props.id); // Proceed with deletion on confirmation
+						handleDelete(props.id);
 					}}
 				>
 					Confirm Delete
@@ -115,9 +115,6 @@ function Sidebar() {
 	const [sidebarData, setSidebarData] = useState(SidebarData);
 	const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 	const [itemId, setItemId] = useState('');
-
-	// const [projectsUpdated, setProjectsUpdated] = useState(false);
-	// const navigate = useNavigate();
 
 	useEffect(() => {
 		const fetchProjects = async () => {
@@ -143,23 +140,6 @@ function Sidebar() {
 		};
 		fetchProjects();
 	}, [sidebarData]);
-
-	// const handleDelete = async (id: string) => {
-	// 	try {
-	// 		const response = await projectService.deleteProject(id);
-	// 		if (response.ok) {
-	// 			console.log(`Project with ID ${id} deleted successfully.`);
-	// 			setProjectsUpdated(!projectsUpdated);
-	// 			navigate('/');
-	// 		} else {
-	// 			console.error(`Failed to delete project with ID ${id}.`);
-	// 		}
-	// 	} catch (error) {
-	// 		if (error instanceof Error) {
-	// 			console.error(`An error occurred: ${error.message}`);
-	// 		}
-	// 	}
-	// };
 
 	return (
 		<>
@@ -232,10 +212,7 @@ function Sidebar() {
 			</IconContext.Provider>
 
 			{isModalOpen && (
-				<MyVerticallyCenteredModal
-					show={isModalOpen}
-					onHide={() => setIsModalOpen(false)}
-				/>
+				<MyCreateProjectModal show={isModalOpen} onHide={() => setIsModalOpen(false)} />
 			)}
 
 			{isDeleteModalOpen && (
