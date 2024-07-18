@@ -59,7 +59,7 @@ const Project = () => {
 	const { sidebar } = useSidebar();
 
 	const { projectName } = useParams();
-	console.log(projectName);
+	// console.log(projectName);
 
 	const [project, setProject] = useState<{
 		name: string;
@@ -70,7 +70,7 @@ const Project = () => {
 		const fetchProject = async () => {
 			if (projectName) {
 				const project = await projectService.getProjectByName(projectName);
-				console.log(project);
+				// console.log(project);
 				setProject(project);
 			}
 		};

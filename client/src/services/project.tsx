@@ -10,7 +10,10 @@ const getProjects = async () => {
 		if (!response.ok) {
 			throw new Error(`HTTP error! status: ${response.status}`);
 		}
-		return await response.json();
+		const projects = await response.json();
+		// const ids = projects.map((project: { id: any }) => project.id);
+		// console.log(projects);
+		return projects;
 	} catch (error) {
 		console.error('Error fetching data:', error);
 		throw error;
@@ -50,8 +53,17 @@ const createProject = async (newObject: IProject) => {
 	}
 };
 
+const deleteProject = (id: string) => {
+	const request = fetch(`${baseUrl}/${id}`, {
+		method: 'DELETE',
+	});
+
+	return request;
+};
+
 export default {
 	getProjects,
 	getProjectByName,
 	createProject,
+	deleteProject,
 };

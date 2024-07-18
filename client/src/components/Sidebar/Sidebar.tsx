@@ -1,27 +1,31 @@
 import { FaBars } from 'react-icons/fa6';
 import { CgClose } from 'react-icons/cg';
+import { IoTrashBin } from 'react-icons/io5';
 import { Link } from 'react-router-dom';
 import { SidebarData } from './SidebarData.js';
 import '../../styles/Sidebar.scss';
 import { IconContext } from 'react-icons';
 import { useSidebar } from './SidebarProvider.js';
 import projectService from '../../services/project.js';
+import { useNavigate } from 'react-router-dom';
 
 import Modal, { ModalProps } from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import * as FaIcons from 'react-icons/fa';
 
 const MyVerticallyCenteredModal = (props: ModalProps) => {
 	const [inputValue, setInputValue] = useState('');
 
-	function handleSubmit() {
+	const handleSubmit = async () => {
 		console.log(inputValue);
+		await projectService.createProject({ name: inputValue });
+
 		if (props.onHide) {
 			props.onHide();
 		}
-	}
+	};
 
 	return (
 		<Modal {...props} size='lg' aria-labelledby='contained-modal-title-vcenter' centered>
@@ -47,7 +51,7 @@ const MyVerticallyCenteredModal = (props: ModalProps) => {
 						handleSubmit();
 					}}
 				>
-					Save Changes
+					Add
 				</Button>
 				<Button variant='secondary' onClick={props.onHide}>
 					Close
@@ -57,9 +61,63 @@ const MyVerticallyCenteredModal = (props: ModalProps) => {
 	);
 };
 
+const MyDeleteConfirmationModal = (props: ModalProps) => {
+	const [projectsUpdated, setProjectsUpdated] = useState(false);
+	const navigate = useNavigate();
+
+	const handleDelete = async (id: string) => {
+		try {
+			const response = await projectService.deleteProject(id);
+			if (response.ok) {
+				console.log(`Project with ID ${id} deleted successfully.`);
+				setProjectsUpdated(!projectsUpdated);
+				navigate('/');
+			} else {
+				console.error(`Failed to delete project with ID ${id}.`);
+			}
+		} catch (error) {
+			if (error instanceof Error) {
+				console.error(`An error occurred: ${error.message}`);
+			}
+		}
+
+		if (props.onHide) {
+			props.onHide();
+		}
+	};
+
+	return (
+		<Modal {...props} size='sm' aria-labelledby='delete-confirm-modal' centered>
+			<Modal.Header closeButton>
+				<Modal.Title id='delete-confirm-modal'>Confirm Deletion</Modal.Title>
+			</Modal.Header>
+			<Modal.Body>Are you sure you want to delete this project?</Modal.Body>
+			<Modal.Footer>
+				<Button
+					variant='danger'
+					onClick={() => {
+						handleDelete(props.id); // Proceed with deletion on confirmation
+					}}
+				>
+					Confirm Delete
+				</Button>
+				<Button variant='secondary' onClick={props.onHide}>
+					Cancel
+				</Button>
+			</Modal.Footer>
+		</Modal>
+	);
+};
+
 function Sidebar() {
 	const { sidebar, toggleSidebar } = useSidebar();
 	const [isModalOpen, setIsModalOpen] = useState(false);
+	const [sidebarData, setSidebarData] = useState(SidebarData);
+	const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+	const [itemId, setItemId] = useState('');
+
+	// const [projectsUpdated, setProjectsUpdated] = useState(false);
+	// const navigate = useNavigate();
 
 	useEffect(() => {
 		const fetchProjects = async () => {
@@ -70,19 +128,38 @@ function Sidebar() {
 			if (projectsCategory) {
 				projectsCategory.items = [
 					...projectsCategory.items.slice(0, 1), // Keep the 'Create new project' item
-					...projects.map((project: { name: string }) => {
+					...projects.map((project: { id: string; name: string }) => {
 						return {
 							title: project.name,
 							path: `/projects/${project.name.toLowerCase()}`,
 							icon: <FaIcons.FaClipboardList />,
 							cName: 'nav-text',
+							id: project.id,
 						};
 					}),
 				];
+				setSidebarData([...sidebarData]);
 			}
 		};
 		fetchProjects();
-	}, []);
+	}, [sidebarData]);
+
+	// const handleDelete = async (id: string) => {
+	// 	try {
+	// 		const response = await projectService.deleteProject(id);
+	// 		if (response.ok) {
+	// 			console.log(`Project with ID ${id} deleted successfully.`);
+	// 			setProjectsUpdated(!projectsUpdated);
+	// 			navigate('/');
+	// 		} else {
+	// 			console.error(`Failed to delete project with ID ${id}.`);
+	// 		}
+	// 	} catch (error) {
+	// 		if (error instanceof Error) {
+	// 			console.error(`An error occurred: ${error.message}`);
+	// 		}
+	// 	}
+	// };
 
 	return (
 		<>
@@ -104,9 +181,9 @@ function Sidebar() {
 								<CgClose color='#524f5f' />
 							</Link>
 						</li>
-						{SidebarData.map((category) => {
+						{SidebarData.map((category, categoryIndex) => {
 							return (
-								<>
+								<React.Fragment key={categoryIndex}>
 									<h3 className={category.cName}>{category.title}</h3>
 									<ul className='categories'>
 										{category.items.map((item, index) => {
@@ -123,8 +200,19 @@ function Sidebar() {
 												>
 													{item.path ? (
 														<Link to={item.path}>
-															{item.icon}
-															<span>{item.title}</span>
+															<div className='left-sidebar-data'>
+																{item.icon}
+																<span>{item.title}</span>
+															</div>
+															<button
+																className='delete-btn'
+																onClick={() => {
+																	setIsDeleteModalOpen(true);
+																	setItemId(item.id);
+																}}
+															>
+																<IoTrashBin />
+															</button>
 														</Link>
 													) : (
 														<span className='project-btn'>
@@ -136,7 +224,7 @@ function Sidebar() {
 											);
 										})}
 									</ul>
-								</>
+								</React.Fragment>
 							);
 						})}
 					</ul>
@@ -147,6 +235,14 @@ function Sidebar() {
 				<MyVerticallyCenteredModal
 					show={isModalOpen}
 					onHide={() => setIsModalOpen(false)}
+				/>
+			)}
+
+			{isDeleteModalOpen && (
+				<MyDeleteConfirmationModal
+					show={isDeleteModalOpen}
+					onHide={() => setIsDeleteModalOpen(false)}
+					id={itemId}
 				/>
 			)}
 		</>

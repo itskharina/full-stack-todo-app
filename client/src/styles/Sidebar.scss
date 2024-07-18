@@ -52,6 +52,16 @@ h3.projects-title {
 	margin-top: 25px;
 }
 
+.sidebar-data {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+}
+
+.left-sidebar-data {
+	display: flex;
+}
+
 .nav-text {
 	display: flex;
 	justify-content: flex-start;
@@ -70,11 +80,19 @@ h3.projects-title {
 		align-items: center;
 		padding: 0 16px;
 		border-radius: 4px;
+		justify-content: space-between;
 
 		&:hover {
 			background-color: #beb9d7;
 		}
 	}
+}
+
+.delete-btn {
+	outline: none;
+	border: 0;
+	background-color: transparent;
+	color: $fontColour;
 }
 
 ul.nav-menu-items {
