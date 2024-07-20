@@ -74,8 +74,24 @@ div.card {
 	}
 }
 
-.description {
+.description-content {
 	font-size: 16px;
+	display: flex;
+	justify-content: space-between;
+
+	p {
+		margin-bottom: 0;
+	}
+
+	.project-name {
+		display: flex;
+		align-items: center;
+		gap: 5px;
+		background-color: $secondColour;
+		padding: 5px 8px;
+		color: white;
+		border-radius: 10px;
+	}
 }
 
 img {
@@ -97,14 +113,58 @@ span {
 	font-size: 16px;
 }
 
+.priority-title {
+	color: $secondColour;
+	font-weight: 500;
+	font-size: 17px;
+}
+
+.flags {
+	margin-top: 13px;
+	display: flex;
+	gap: 20px;
+
+	.priority-container {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+	}
+
+	.priority-flag {
+		width: 30px;
+	}
+
+	.priority-subtitle {
+		font-size: 16px;
+		margin-bottom: 10px;
+		color: $secondColour;
+		text-decoration: underline;
+		text-underline-offset: 3px;
+		text-decoration-thickness: 1px;
+		text-decoration-color: $secondColour;
+	}
+
+	.form-check-input[type='radio'] {
+		width: 13px;
+		height: 13px;
+	}
+}
+
 .accordion {
 	width: 60%;
 	margin: 0 auto;
 	padding-top: 0.7rem;
 }
 
+input[type='textarea'] {
+	height: 50px;
+	font-size: 0.9rem;
+}
+
 div.modal-content {
 	background-color: $backgroundColour;
+	max-width: 600px;
+	margin: 0 auto;
 
 	.modal-header {
 		border-bottom: 0;
@@ -114,10 +174,12 @@ div.modal-content {
 		color: $secondColour;
 	}
 
+	.modal-footer {
+		justify-content: space-between;
+	}
+
 	.form-label {
-		color: $secondColour;
-		font-weight: 500;
-		font-size: 17px;
+		@extend .priority-title;
 	}
 
 	.form-control {
@@ -128,6 +190,11 @@ div.modal-content {
 		// 	box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
 		// }
 	}
+}
+
+.modal-footer-btns {
+	display: flex;
+	gap: 10px;
 }
 
 div.dropdown-menu {

@@ -7,20 +7,27 @@ import '../../styles/Sidebar.scss';
 import { IconContext } from 'react-icons';
 import { useSidebar } from './SidebarProvider.js';
 import projectService from '../../services/project.js';
+// import todoService from '../../services/todos.js';
 import { useNavigate } from 'react-router-dom';
 
 import Modal, { ModalProps } from 'react-bootstrap/Modal';
+import Dropdown from 'react-bootstrap/Dropdown';
+import DropdownButton from 'react-bootstrap/DropdownButton';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import React, { useEffect, useState } from 'react';
 import * as FaIcons from 'react-icons/fa';
+import redFlag from '../../assets/redflag.png';
+import orangeFlag from '../../assets/orangeflag.png';
+import greenFlag from '../../assets/greenflag.png';
+import greyFlag from '../../assets/greyflag.png';
 
 const MyCreateProjectModal = (props: ModalProps) => {
 	const [inputValue, setInputValue] = useState('');
 
 	const handleSubmit = async () => {
 		console.log(inputValue);
-		await projectService.createProject({ name: inputValue });
+		await projectService.createProject({ name: inputValue, todos: [] });
 
 		if (props.onHide) {
 			props.onHide();
@@ -109,12 +116,212 @@ const MyDeleteConfirmationModal = (props: ModalProps) => {
 	);
 };
 
-function Sidebar() {
+const MyCreateTodoModal = (props: ModalProps) => {
+	const [projects, setProjects] = React.useState<Project[]>([]);
+	const [selectedProject, setSelectedProject] = React.useState('');
+	const [formData, setFormData] = React.useState({
+		title: '',
+		description: '',
+		dueDate: '',
+		priority: '',
+		project: '',
+	});
+
+	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		const { name, value, type, checked } = e.target;
+		setFormData((prevFormData) => {
+			return {
+				...prevFormData,
+				[name]: type === 'checkbox' ? checked : value,
+			};
+		});
+	};
+
+	useEffect(() => {
+		const fetchProjects = async () => {
+			const fetchedProjects = await projectService.getProjects();
+			setProjects(fetchedProjects);
+		};
+		fetchProjects();
+	}, []);
+
+	useEffect(() => {
+		console.log(formData);
+	}, [formData]);
+
+	const handleSubmit = async () => {
+		// console.log(inputValue);
+		// await projectService.createProject({ name: inputValue, todos: [] });
+
+		if (props.onHide) {
+			props.onHide();
+		}
+	};
+
+	interface Project {
+		id: string;
+		name: string;
+	}
+
+	return (
+		<Modal
+			{...props}
+			size='lg'
+			aria-labelledby='contained-modal-title-vcenter'
+			centered
+			className='width'
+		>
+			<Modal.Header closeButton>
+				<Modal.Title id='contained-modal-title-vcenter'>Add your task!</Modal.Title>
+			</Modal.Header>
+			<Modal.Body>
+				<Form>
+					<Form.Group className='mb-3' controlId='exampleForm.ControlInput1'>
+						<Form.Label>Title</Form.Label>
+						<Form.Control
+							type='text'
+							autoFocus
+							value={formData.title}
+							onChange={handleChange}
+							name='title'
+						/>
+					</Form.Group>
+					<Form.Group className='mb-3' controlId='exampleForm.ControlInput1'>
+						<Form.Label>Description</Form.Label>
+						<Form.Control
+							type='textarea'
+							autoFocus
+							value={formData.description}
+							onChange={handleChange}
+							name='description'
+						/>
+					</Form.Group>
+					<Form.Group className='mb-3' controlId='exampleForm.ControlInput1'>
+						<Form.Label>Due Date</Form.Label>
+						<Form.Control
+							type='date'
+							autoFocus
+							value={formData.dueDate}
+							onChange={handleChange}
+							name='dueDate'
+						/>
+					</Form.Group>
+					<h2 className='priority-title'>Priority</h2>
+					<div className='flags'>
+						<div className='priority-container'>
+							<h3 className='priority-subtitle'>None</h3>
+							<Form.Check
+								inline
+								label={
+									<img className='priority-flag' src={greyFlag} alt='no priority flag' />
+								}
+								type='radio'
+								id='none'
+								name='priority'
+								value='none'
+								checked={formData.priority === 'none'}
+								onChange={handleChange}
+							/>
+						</div>
+						<div className='priority-container'>
+							<h3 className='priority-subtitle'>Low</h3>
+							<Form.Check
+								inline
+								label={
+									<img
+										className='priority-flag'
+										src={greenFlag}
+										alt='low priority flag'
+									/>
+								}
+								type='radio'
+								id='low'
+								name='priority'
+								value='low'
+								checked={formData.priority === 'low'}
+								onChange={handleChange}
+							/>
+						</div>
+						<div className='priority-container'>
+							<h3 className='priority-subtitle'>Medium</h3>
+							<Form.Check
+								inline
+								label={
+									<img
+										className='priority-flag'
+										src={orangeFlag}
+										alt='medium priority flag'
+									/>
+								}
+								type='radio'
+								id='medium'
+								name='priority'
+								value='medium'
+								checked={formData.priority === 'medium'}
+								onChange={handleChange}
+							/>
+						</div>
+						<div className='priority-container'>
+							<h3 className='priority-subtitle'>High</h3>
+							<Form.Check
+								inline
+								label={
+									<img className='priority-flag' src={redFlag} alt='high priority flag' />
+								}
+								type='radio'
+								id='high'
+								name='priority'
+								value='high'
+								checked={formData.priority === 'high'}
+								onChange={handleChange}
+							/>
+						</div>
+					</div>
+				</Form>
+			</Modal.Body>
+			<Modal.Footer>
+				<DropdownButton
+					id='dropdown-basic-button'
+					title={selectedProject || 'Select a project'}
+				>
+					<Dropdown.Item href='#' onClick={() => setSelectedProject('Upcoming')}>
+						Upcoming
+					</Dropdown.Item>
+					{projects.map((project) => (
+						<Dropdown.Item
+							key={project.id}
+							href='#'
+							onClick={() => setSelectedProject(project.name)}
+						>
+							{project.name}
+						</Dropdown.Item>
+					))}
+				</DropdownButton>
+				<div className='modal-footer-btns'>
+					<Button
+						variant='primary'
+						onClick={() => {
+							handleSubmit();
+						}}
+					>
+						Add
+					</Button>
+					<Button variant='secondary' onClick={props.onHide}>
+						Close
+					</Button>
+				</div>
+			</Modal.Footer>
+		</Modal>
+	);
+};
+
+const Sidebar = () => {
 	const { sidebar, toggleSidebar } = useSidebar();
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const [sidebarData, setSidebarData] = useState(SidebarData);
 	const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 	const [itemId, setItemId] = useState('');
+	const [isCreateTodoModalOpen, setIsCreateTodoModalOpen] = useState(false);
 
 	useEffect(() => {
 		const fetchProjects = async () => {
@@ -124,7 +331,7 @@ function Sidebar() {
 			);
 			if (projectsCategory) {
 				projectsCategory.items = [
-					...projectsCategory.items.slice(0, 1), // Keep the 'Create new project' item
+					...projectsCategory.items.slice(0, 1),
 					...projects.map((project: { id: string; name: string }) => {
 						return {
 							title: project.name,
@@ -151,6 +358,16 @@ function Sidebar() {
 						aria-label='Toggle sidebar'
 					>
 						<FaBars color='white' />
+					</button>
+					<button
+						className='create-todo-btn'
+						aria-label='Add new task'
+						onClick={(e) => {
+							e.preventDefault();
+							setIsCreateTodoModalOpen(true);
+						}}
+					>
+						+ Add new task
 					</button>
 				</div>
 
@@ -184,15 +401,17 @@ function Sidebar() {
 																{item.icon}
 																<span>{item.title}</span>
 															</div>
-															<button
-																className='delete-btn'
-																onClick={() => {
-																	setIsDeleteModalOpen(true);
-																	setItemId(item.id);
-																}}
-															>
-																<IoTrashBin />
-															</button>
+															{item.id !== 'main-tasks' && (
+																<button
+																	className='delete-btn'
+																	onClick={() => {
+																		setIsDeleteModalOpen(true);
+																		setItemId(item.id);
+																	}}
+																>
+																	<IoTrashBin />
+																</button>
+															)}
 														</Link>
 													) : (
 														<span className='project-btn'>
@@ -215,6 +434,13 @@ function Sidebar() {
 				<MyCreateProjectModal show={isModalOpen} onHide={() => setIsModalOpen(false)} />
 			)}
 
+			{isCreateTodoModalOpen && (
+				<MyCreateTodoModal
+					show={isCreateTodoModalOpen}
+					onHide={() => setIsCreateTodoModalOpen(false)}
+				/>
+			)}
+
 			{isDeleteModalOpen && (
 				<MyDeleteConfirmationModal
 					show={isDeleteModalOpen}
@@ -224,6 +450,6 @@ function Sidebar() {
 			)}
 		</>
 	);
-}
+};
 
 export default Sidebar;

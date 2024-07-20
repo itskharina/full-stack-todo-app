@@ -4,7 +4,7 @@ $backgroundColour: #f1eef7;
 
 .navbar {
 	background-color: #59556d;
-	height: 80px;
+	height: 100px;
 	display: flex;
 	justify-content: flex-start;
 	align-items: center;
@@ -93,6 +93,24 @@ h3.projects-title {
 	border: 0;
 	background-color: transparent;
 	color: $fontColour;
+}
+
+.create-todo-btn {
+	border: 0;
+	background-color: #f1eef7;
+	padding: 10px;
+	border-radius: 8px;
+	color: black;
+	font-size: 16px;
+	text-align: center;
+	box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+	cursor: pointer;
+	width: 160px;
+	margin-right: 300px;
+
+	&:active {
+		transform: translateY(2px);
+	}
 }
 
 ul.nav-menu-items {
