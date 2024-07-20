@@ -1,4 +1,3 @@
-// TodoList.tsx
 import React from 'react';
 import Accordion from 'react-bootstrap/Accordion';
 import Card from 'react-bootstrap/Card';
@@ -8,6 +7,7 @@ import { FaInfoCircle } from 'react-icons/fa';
 import { BsThreeDots } from 'react-icons/bs';
 import { useAccordionButton } from 'react-bootstrap/AccordionButton';
 import { ITodo } from '../store/todoSlice';
+import { TbSubtask } from 'react-icons/tb';
 
 interface TodoItemProps {
 	todo: ITodo;
@@ -61,7 +61,19 @@ const TodoItem = ({ todo, index, priorityImages }: TodoItemProps) => (
 		</Card.Header>
 		<Accordion.Collapse eventKey={index.toString()}>
 			<Card.Body className='description'>
-				<b>Description:</b> {todo.todo}
+				<div className='description-content'>
+					<p>
+						<b>Description:</b> {todo.todo}
+					</p>
+					<p>
+						{todo.project && (
+							<p className='project-name'>
+								<TbSubtask />
+								{todo.project.name}
+							</p>
+						)}
+					</p>
+				</div>
 			</Card.Body>
 		</Accordion.Collapse>
 	</Card>
