@@ -7,16 +7,8 @@ import redFlag from '../assets/redflag.png';
 import orangeFlag from '../assets/orangeflag.png';
 import greenFlag from '../assets/greenflag.png';
 import greyFlag from '../assets/greyflag.png';
-
+import { ITodo } from '../store/todoSlice.js';
 import TodoList from '../components/Accordion.js';
-
-interface ITodo {
-	title: string;
-	todo: string;
-	dueDate?: Date;
-	priority: 'none' | 'high' | 'medium' | 'low';
-	project: string | null;
-}
 
 const Project = () => {
 	const { sidebar } = useSidebar();

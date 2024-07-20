@@ -1,11 +1,16 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
+export interface IProject {
+	name: string;
+	todos: string[];
+}
+
 export interface ITodo {
 	title: string;
 	todo: string;
 	dueDate?: string;
 	priority: string;
-	project: string | null;
+	project: IProject | null;
 }
 
 const initialState: ITodo[] = [];

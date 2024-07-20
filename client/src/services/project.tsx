@@ -1,8 +1,5 @@
 const baseUrl = 'http://localhost:3001/projects';
-
-export interface IProject {
-	name: string;
-}
+import { IProject } from '../store/todoSlice';
 
 const getProjects = async () => {
 	try {
