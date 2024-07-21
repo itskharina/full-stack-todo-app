@@ -6,10 +6,11 @@ POST http://localhost:3001/todos
 Content-Type: application/json
 
 {		
-		"title": "test date again",
-		"todo": "yay",
+		"title": "test project empty",
+		"todo": "lol",
 		"dueDate": "2024-05-24",
-		"priority": "medium"
+		"priority": "medium",
+		"project": ""
 }
 
 ###

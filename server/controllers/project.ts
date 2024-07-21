@@ -42,6 +42,27 @@ const getProjectByName = async (
 	}
 };
 
+const getProjectById = async (
+	req: Request,
+	res: Response,
+	next: NextFunction
+): Promise<Response | void> => {
+	try {
+		const project = await Project.findOne({
+			name: { $regex: req.params.id, $options: 'i' },
+		}).populate('todos');
+		if (!project) {
+			return res.status(404).json({ error: 'Project not found' });
+		}
+		res.json(project);
+	} catch (error) {
+		if (error instanceof Error) {
+			error.message = 'Error getting project';
+		}
+		next(error);
+	}
+};
+
 const createProject = async (
 	req: Request,
 	res: Response,
@@ -93,4 +114,5 @@ export default {
 	getProjectByName,
 	createProject,
 	deleteProject,
+	getProjectById,
 };

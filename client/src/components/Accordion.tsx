@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Accordion from 'react-bootstrap/Accordion';
 import Card from 'react-bootstrap/Card';
 import Dropdown from 'react-bootstrap/Dropdown';
@@ -7,7 +7,9 @@ import { FaInfoCircle } from 'react-icons/fa';
 import { BsThreeDots } from 'react-icons/bs';
 import { useAccordionButton } from 'react-bootstrap/AccordionButton';
 import { ITodo } from '../store/todoSlice';
+import { IProject } from '../store/todoSlice';
 import { TbSubtask } from 'react-icons/tb';
+import { projectToNameRepresentation } from '../projectUtils';
 
 interface TodoItemProps {
 	todo: ITodo;
@@ -31,53 +33,72 @@ interface TodoListProps {
 	};
 }
 
-const TodoItem = ({ todo, index, priorityImages }: TodoItemProps) => (
-	<Card style={{ marginBottom: '20px' }} key={index}>
-		<Card.Header>
-			<div className='left'>
-				<input type='checkbox' className='checkbox' data-index={index} />
-				<span className='title'>
-					<b>{todo.title}</b>
-				</span>
-			</div>
-			<div className='right'>
-				{todo.dueDate && (
-					<span className='due-date'>
-						<b>Due:</b> {format(todo.dueDate, 'do MMM yyyy')}
+const TodoItem = ({ todo, index, priorityImages }: TodoItemProps) => {
+	const [projectDetails, setProjectDetails] = useState<string | null>(null);
+
+	useEffect(() => {
+		const fetchProjectDetails = async () => {
+			if (todo.project) {
+				console.log('todo.project', todo.project);
+
+				const details = projectToNameRepresentation(todo.project as unknown as IProject);
+				setProjectDetails(details);
+			} else {
+				setProjectDetails(null);
+			}
+		};
+
+		fetchProjectDetails();
+	}, [todo.project]);
+
+	return (
+		<Card style={{ marginBottom: '20px' }} key={index}>
+			<Card.Header>
+				<div className='left'>
+					<input type='checkbox' className='checkbox' data-index={index} />
+					<span className='title'>
+						<b>{todo.title}</b>
 					</span>
-				)}
-				<img className='priority' src={priorityImages[todo.priority]} />
-				<CustomToggle eventKey={index.toString()}></CustomToggle>
-				<Dropdown>
-					<Dropdown.Toggle as={CustomDropDown} id='dropdown-custom-component'>
-						<BsThreeDots />
-					</Dropdown.Toggle>
-					<Dropdown.Menu>
-						<Dropdown.Item eventKey='1'>Edit</Dropdown.Item>
-						<Dropdown.Item eventKey='2'>Delete</Dropdown.Item>
-					</Dropdown.Menu>
-				</Dropdown>
-			</div>
-		</Card.Header>
-		<Accordion.Collapse eventKey={index.toString()}>
-			<Card.Body className='description'>
-				<div className='description-content'>
-					<p>
-						<b>Description:</b> {todo.todo}
-					</p>
-					<p>
-						{todo.project && (
-							<p className='project-name'>
-								<TbSubtask />
-								{todo.project.name}
-							</p>
-						)}
-					</p>
 				</div>
-			</Card.Body>
-		</Accordion.Collapse>
-	</Card>
-);
+				<div className='right'>
+					{todo.dueDate && (
+						<span className='due-date'>
+							<b>Due:</b> {format(todo.dueDate, 'do MMM yyyy')}
+						</span>
+					)}
+					<img className='priority' src={priorityImages[todo.priority]} />
+					<CustomToggle eventKey={index.toString()}></CustomToggle>
+					<Dropdown>
+						<Dropdown.Toggle as={CustomDropDown} id='dropdown-custom-component'>
+							<BsThreeDots />
+						</Dropdown.Toggle>
+						<Dropdown.Menu>
+							<Dropdown.Item eventKey='1'>Edit</Dropdown.Item>
+							<Dropdown.Item eventKey='2'>Delete</Dropdown.Item>
+						</Dropdown.Menu>
+					</Dropdown>
+				</div>
+			</Card.Header>
+			<Accordion.Collapse eventKey={index.toString()}>
+				<Card.Body className='description'>
+					<div className='description-content'>
+						<p>
+							<b>Description:</b> {todo.todo}
+						</p>
+						<p>
+							{projectDetails && (
+								<p className='project-name'>
+									<TbSubtask />
+									{projectDetails}
+								</p>
+							)}
+						</p>
+					</div>
+				</Card.Body>
+			</Accordion.Collapse>
+		</Card>
+	);
+};
 
 const TodoList = ({ todos, priorityImages }: TodoListProps) => (
 	<Accordion>

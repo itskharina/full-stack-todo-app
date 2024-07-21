@@ -1,4 +1,10 @@
-import { ITodo } from '../store/todoSlice';
+interface ITodo {
+	title: string;
+	todo: string;
+	dueDate?: string;
+	priority: string;
+	project: string | null;
+}
 
 const baseUrl = 'http://localhost:3001/todos';
 

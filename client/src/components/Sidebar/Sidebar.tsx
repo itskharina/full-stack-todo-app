@@ -7,8 +7,11 @@ import '../../styles/Sidebar.scss';
 import { IconContext } from 'react-icons';
 import { useSidebar } from './SidebarProvider.js';
 import projectService from '../../services/project.js';
-// import todoService from '../../services/todos.js';
+import todoService from '../../services/todos.js';
 import { useNavigate } from 'react-router-dom';
+
+import { ITodo } from '../../store/todoSlice.js';
+import { IProject } from '../../store/todoSlice.js';
 
 import Modal, { ModalProps } from 'react-bootstrap/Modal';
 import Dropdown from 'react-bootstrap/Dropdown';
@@ -22,12 +25,14 @@ import orangeFlag from '../../assets/orangeflag.png';
 import greenFlag from '../../assets/greenflag.png';
 import greyFlag from '../../assets/greyflag.png';
 
+// ADD STUFF SO THAT THEY CANT LEAVE ANYTHING BLANK
+// WHEN U ADD TODO MAKE PAGE REFRESH WITH NEW TODO
+
 const MyCreateProjectModal = (props: ModalProps) => {
 	const [inputValue, setInputValue] = useState('');
 
 	const handleSubmit = async () => {
-		console.log(inputValue);
-		await projectService.createProject({ name: inputValue, todos: [] });
+		await projectService.createProject({ id: '', name: inputValue, todos: [] });
 
 		if (props.onHide) {
 			props.onHide();
@@ -117,14 +122,14 @@ const MyDeleteConfirmationModal = (props: ModalProps) => {
 };
 
 const MyCreateTodoModal = (props: ModalProps) => {
-	const [projects, setProjects] = React.useState<Project[]>([]);
+	const [projects, setProjects] = React.useState<IProject[]>([]);
 	const [selectedProject, setSelectedProject] = React.useState('');
-	const [formData, setFormData] = React.useState({
+	const [formData, setFormData] = React.useState<ITodo>({
 		title: '',
-		description: '',
+		todo: '',
 		dueDate: '',
 		priority: '',
-		project: '',
+		project: null,
 	});
 
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -145,23 +150,31 @@ const MyCreateTodoModal = (props: ModalProps) => {
 		fetchProjects();
 	}, []);
 
-	useEffect(() => {
-		console.log(formData);
-	}, [formData]);
-
 	const handleSubmit = async () => {
-		// console.log(inputValue);
-		// await projectService.createProject({ name: inputValue, todos: [] });
+		console.log('formData before submit', formData);
+		console.log('Submitting project ID:', formData.project);
+
+		const payload = {
+			...formData,
+			project: formData.project,
+		};
+		await todoService.createTodo(payload);
 
 		if (props.onHide) {
 			props.onHide();
 		}
 	};
 
-	interface Project {
-		id: string;
-		name: string;
-	}
+	const updateProjectState = (project: IProject | null) => {
+		// console.log(project);
+		setSelectedProject(project ? project.name : 'Upcoming');
+		setFormData((prevFormData) => ({
+			...prevFormData,
+			project: project ? project.id : null,
+		}));
+		// console.log('selected', selectedProject);
+		// console.log('formData', formData);
+	};
 
 	return (
 		<Modal
@@ -191,9 +204,9 @@ const MyCreateTodoModal = (props: ModalProps) => {
 						<Form.Control
 							type='textarea'
 							autoFocus
-							value={formData.description}
+							value={formData.todo}
 							onChange={handleChange}
-							name='description'
+							name='todo'
 						/>
 					</Form.Group>
 					<Form.Group className='mb-3' controlId='exampleForm.ControlInput1'>
@@ -283,15 +296,16 @@ const MyCreateTodoModal = (props: ModalProps) => {
 				<DropdownButton
 					id='dropdown-basic-button'
 					title={selectedProject || 'Select a project'}
+					key={selectedProject}
 				>
-					<Dropdown.Item href='#' onClick={() => setSelectedProject('Upcoming')}>
+					<Dropdown.Item href='#' onClick={() => updateProjectState(null)}>
 						Upcoming
 					</Dropdown.Item>
 					{projects.map((project) => (
 						<Dropdown.Item
 							key={project.id}
 							href='#'
-							onClick={() => setSelectedProject(project.name)}
+							onClick={() => updateProjectState(project)}
 						>
 							{project.name}
 						</Dropdown.Item>

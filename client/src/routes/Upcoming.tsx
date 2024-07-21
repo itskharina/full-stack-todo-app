@@ -4,7 +4,6 @@ import { setTodos } from '../store/todoSlice';
 import { useSidebar } from '../components/Sidebar/SidebarProvider';
 import { useAppSelector, useAppDispatch } from '../hooks';
 import TodoList from '../components/Accordion';
-
 import redFlag from '../assets/redflag.png';
 import orangeFlag from '../assets/orangeflag.png';
 import greenFlag from '../assets/greenflag.png';

@@ -27,6 +27,19 @@ const getProjectByName = async (projectName: string) => {
 	}
 };
 
+const getProjectById = async (projectId: string) => {
+	try {
+		const response = await fetch(`${baseUrl}/${projectId}`);
+		if (!response.ok) {
+			throw new Error(`HTTP error! status: ${response.status}`);
+		}
+		return await response.json();
+	} catch (error) {
+		console.error('Error fetching data:', error);
+		throw error;
+	}
+};
+
 const createProject = async (newObject: IProject) => {
 	try {
 		const response = await fetch(baseUrl, {
@@ -60,4 +73,5 @@ export default {
 	getProjectByName,
 	createProject,
 	deleteProject,
+	getProjectById,
 };

@@ -22,7 +22,7 @@ $secondColour: #59556d;
 .today,
 .project {
 	// @include flex(column);
-	height: 100vh;
+	min-height: 100vh;
 	justify-content: center;
 	font-size: 3rem;
 	background-color: $backgroundColour;
@@ -92,6 +92,13 @@ div.card {
 		color: white;
 		border-radius: 10px;
 	}
+}
+
+button#dropdown-basic-button {
+	background-color: #d1cde6;
+	border-color: #d1cde6;
+	color: $secondColour;
+	font-weight: 500;
 }
 
 img {

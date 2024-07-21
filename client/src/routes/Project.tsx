@@ -16,6 +16,7 @@ const Project = () => {
 	const { projectName } = useParams();
 
 	const [project, setProject] = useState<{
+		id: string;
 		name: string;
 		todos: ITodo[];
 	} | null>(null);
