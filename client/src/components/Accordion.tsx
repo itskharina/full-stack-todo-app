@@ -10,6 +10,9 @@ import { ITodo } from '../store/todoSlice';
 import { IProject } from '../store/todoSlice';
 import { TbSubtask } from 'react-icons/tb';
 import { projectToNameRepresentation } from '../projectUtils';
+import todoService from '../services/todos.js';
+import Modal, { ModalProps } from 'react-bootstrap/Modal';
+import { Button } from 'react-bootstrap';
 
 interface TodoItemProps {
 	todo: ITodo;
@@ -35,12 +38,11 @@ interface TodoListProps {
 
 const TodoItem = ({ todo, index, priorityImages }: TodoItemProps) => {
 	const [projectDetails, setProjectDetails] = useState<string | null>(null);
+	const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
 	useEffect(() => {
 		const fetchProjectDetails = async () => {
 			if (todo.project) {
-				console.log('todo.project', todo.project);
-
 				const details = projectToNameRepresentation(todo.project as unknown as IProject);
 				setProjectDetails(details);
 			} else {
@@ -51,52 +53,75 @@ const TodoItem = ({ todo, index, priorityImages }: TodoItemProps) => {
 		fetchProjectDetails();
 	}, [todo.project]);
 
+	const handleEdit = () => {
+		console.log('clicked edit');
+	};
+
 	return (
-		<Card style={{ marginBottom: '20px' }} key={index}>
-			<Card.Header>
-				<div className='left'>
-					<input type='checkbox' className='checkbox' data-index={index} />
-					<span className='title'>
-						<b>{todo.title}</b>
-					</span>
-				</div>
-				<div className='right'>
-					{todo.dueDate && (
-						<span className='due-date'>
-							<b>Due:</b> {format(todo.dueDate, 'do MMM yyyy')}
+		<>
+			<Card style={{ marginBottom: '20px' }} key={index}>
+				<Card.Header>
+					<div className='left'>
+						<input type='checkbox' className='checkbox' data-index={index} />
+						<span className='title'>
+							<b>{todo.title}</b>
 						</span>
-					)}
-					<img className='priority' src={priorityImages[todo.priority]} />
-					<CustomToggle eventKey={index.toString()}></CustomToggle>
-					<Dropdown>
-						<Dropdown.Toggle as={CustomDropDown} id='dropdown-custom-component'>
-							<BsThreeDots />
-						</Dropdown.Toggle>
-						<Dropdown.Menu>
-							<Dropdown.Item eventKey='1'>Edit</Dropdown.Item>
-							<Dropdown.Item eventKey='2'>Delete</Dropdown.Item>
-						</Dropdown.Menu>
-					</Dropdown>
-				</div>
-			</Card.Header>
-			<Accordion.Collapse eventKey={index.toString()}>
-				<Card.Body className='description'>
-					<div className='description-content'>
-						<p>
-							<b>Description:</b> {todo.todo}
-						</p>
-						<p>
-							{projectDetails && (
-								<p className='project-name'>
-									<TbSubtask />
-									{projectDetails}
-								</p>
-							)}
-						</p>
 					</div>
-				</Card.Body>
-			</Accordion.Collapse>
-		</Card>
+					<div className='right'>
+						{todo.dueDate && (
+							<span className='due-date'>
+								<b>Due:</b> {format(todo.dueDate, 'do MMM yyyy')}
+							</span>
+						)}
+						<img className='priority' src={priorityImages[todo.priority]} />
+						<CustomToggle eventKey={index.toString()}></CustomToggle>
+						<Dropdown>
+							<Dropdown.Toggle as={CustomDropDown} id='dropdown-custom-component'>
+								<BsThreeDots />
+							</Dropdown.Toggle>
+							<Dropdown.Menu>
+								<Dropdown.Item eventKey='1' onClick={handleEdit}>
+									Edit
+								</Dropdown.Item>
+								<Dropdown.Item
+									eventKey='2'
+									onClick={() => {
+										setIsDeleteModalOpen(true);
+									}}
+								>
+									Delete
+								</Dropdown.Item>
+							</Dropdown.Menu>
+						</Dropdown>
+					</div>
+				</Card.Header>
+				<Accordion.Collapse eventKey={index.toString()}>
+					<Card.Body className='description'>
+						<div className='description-content'>
+							<p>
+								<b>Description:</b> {todo.todo}
+							</p>
+							<p>
+								{projectDetails && (
+									<p className='project-name'>
+										<TbSubtask />
+										{projectDetails}
+									</p>
+								)}
+							</p>
+						</div>
+					</Card.Body>
+				</Accordion.Collapse>
+			</Card>
+
+			{isDeleteModalOpen && (
+				<MyDeleteConfirmationModal
+					show={isDeleteModalOpen}
+					onHide={() => setIsDeleteModalOpen(false)}
+					id={todo.id}
+				/>
+			)}
+		</>
 	);
 };
 
@@ -138,5 +163,49 @@ const CustomDropDown = React.forwardRef<HTMLAnchorElement, CustomDropDownProps>(
 		</a>
 	)
 );
+
+const MyDeleteConfirmationModal = (props: ModalProps) => {
+	const handleDelete = async (id: string) => {
+		try {
+			const response = await todoService.deleteTodo(id);
+			if (response.ok) {
+				window.location.reload();
+				console.log(`Todo with ID ${id} deleted successfully.`);
+			} else {
+				console.error(`Failed to delete todo with ID ${id}.`);
+			}
+		} catch (error) {
+			if (error instanceof Error) {
+				console.error(`An error occurred: ${error.message}`);
+			}
+		}
+
+		if (props.onHide) {
+			props.onHide();
+		}
+	};
+
+	return (
+		<Modal {...props} size='sm' aria-labelledby='delete-confirm-modal' centered>
+			<Modal.Header closeButton>
+				<Modal.Title id='delete-confirm-modal'>Confirm Deletion</Modal.Title>
+			</Modal.Header>
+			<Modal.Body>Are you sure you want to delete this todo?</Modal.Body>
+			<Modal.Footer>
+				<Button
+					variant='danger'
+					onClick={() => {
+						handleDelete(props.id);
+					}}
+				>
+					Confirm Delete
+				</Button>
+				<Button variant='secondary' onClick={props.onHide}>
+					Cancel
+				</Button>
+			</Modal.Footer>
+		</Modal>
+	);
+};
 
 export default TodoList;

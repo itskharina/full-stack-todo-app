@@ -7,6 +7,7 @@ export interface IProject {
 }
 
 export interface ITodo {
+	id: string;
 	title: string;
 	todo: string;
 	dueDate?: string;

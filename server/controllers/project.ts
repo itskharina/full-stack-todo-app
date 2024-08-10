@@ -1,5 +1,6 @@
 import Project from '../models/project.js';
 import { Request, Response, NextFunction } from 'express';
+import Todo from '../models/todo.js';
 
 interface ProjectRequestBody {
 	name: string;
@@ -102,6 +103,8 @@ const deleteProject = async (
 	next: NextFunction
 ): Promise<void> => {
 	try {
+		await Todo.deleteMany({ project: req.params.id });
+
 		await Project.findByIdAndDelete(req.params.id);
 		res.status(204).end();
 	} catch (error) {

@@ -32,7 +32,7 @@ const Project = () => {
 	}, [projectName]);
 
 	if (!project) {
-		return <div>Loading...</div>;
+		return null;
 	}
 
 	const priorityImages: {

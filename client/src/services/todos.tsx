@@ -41,12 +41,12 @@ const createTodo = async (newObject: ITodo) => {
 	}
 };
 
-// const deleteTodo = (id) => {
-// 	const request = fetch(`${baseUrl}/${id}`, {
-// 		method: 'DELETE',
-// 	});
+const deleteTodo = (id: string) => {
+	const request = fetch(`${baseUrl}/${id}`, {
+		method: 'DELETE',
+	});
 
-// 	return request;
-// };
+	return request;
+};
 
-export default { getTodos, createTodo };
+export default { getTodos, createTodo, deleteTodo };

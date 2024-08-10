@@ -103,7 +103,10 @@ const MyDeleteConfirmationModal = (props: ModalProps) => {
 			<Modal.Header closeButton>
 				<Modal.Title id='delete-confirm-modal'>Confirm Deletion</Modal.Title>
 			</Modal.Header>
-			<Modal.Body>Are you sure you want to delete this project?</Modal.Body>
+			<Modal.Body>
+				Are you sure you want to delete this project? All of the tasks associated with
+				this project will disappear too.
+			</Modal.Body>
 			<Modal.Footer>
 				<Button
 					variant='danger'
@@ -125,6 +128,7 @@ const MyCreateTodoModal = (props: ModalProps) => {
 	const [projects, setProjects] = React.useState<IProject[]>([]);
 	const [selectedProject, setSelectedProject] = React.useState('');
 	const [formData, setFormData] = React.useState<ITodo>({
+		id: '',
 		title: '',
 		todo: '',
 		dueDate: '',
@@ -159,6 +163,7 @@ const MyCreateTodoModal = (props: ModalProps) => {
 			project: formData.project,
 		};
 		await todoService.createTodo(payload);
+		window.location.reload();
 
 		if (props.onHide) {
 			props.onHide();
@@ -166,14 +171,11 @@ const MyCreateTodoModal = (props: ModalProps) => {
 	};
 
 	const updateProjectState = (project: IProject | null) => {
-		// console.log(project);
 		setSelectedProject(project ? project.name : 'Upcoming');
 		setFormData((prevFormData) => ({
 			...prevFormData,
 			project: project ? project.id : null,
 		}));
-		// console.log('selected', selectedProject);
-		// console.log('formData', formData);
 	};
 
 	return (
