@@ -80,7 +80,7 @@ const deleteTodo = async (
 	try {
 		const todo = await Todo.findById(req.params.id).populate('project');
 		if (todo?.project) {
-			await Project.updateOne({ _id: todo.project }, { $pull: { todos: todo._id } });
+			await Project.updateOne({ _id: todo.project.id }, { $pull: { todos: todo._id } });
 		}
 
 		await Todo.findByIdAndDelete(req.params.id);
@@ -98,6 +98,8 @@ const updateTodo = async (
 	try {
 		const body = req.body as TodoRequestBody;
 
+		console.log('Received update body:', req.body);
+
 		if (!body.todo || !body.title) {
 			return res.status(400).json({ error: 'Content cannot be empty' });
 		}
@@ -112,10 +114,10 @@ const updateTodo = async (
 		existingTodo.dueDate = body.dueDate;
 		existingTodo.priority = body.priority;
 
-		if (body.project && body.project !== existingTodo.project?.toString()) {
+		if (body.project) {
 			if (existingTodo.project) {
 				await Project.updateOne(
-					{ _id: existingTodo.project.toString() },
+					{ _id: existingTodo.project.id },
 					{ $pull: { todos: existingTodo._id } }
 				);
 			}

@@ -11,8 +11,14 @@ import { IProject } from '../store/todoSlice';
 import { TbSubtask } from 'react-icons/tb';
 import { projectToNameRepresentation } from '../projectUtils';
 import todoService from '../services/todos.js';
+import projectService from '../services/project.js';
 import Modal, { ModalProps } from 'react-bootstrap/Modal';
-import { Button } from 'react-bootstrap';
+import { Button, DropdownButton, Form } from 'react-bootstrap';
+
+import redFlag from '../assets/redflag.png';
+import orangeFlag from '../assets/orangeflag.png';
+import greenFlag from '../assets/greenflag.png';
+import greyFlag from '../assets/greyflag.png';
 
 interface TodoItemProps {
 	todo: ITodo;
@@ -39,6 +45,7 @@ interface TodoListProps {
 const TodoItem = ({ todo, index, priorityImages }: TodoItemProps) => {
 	const [projectDetails, setProjectDetails] = useState<string | null>(null);
 	const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+	const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
 	useEffect(() => {
 		const fetchProjectDetails = async () => {
@@ -52,10 +59,6 @@ const TodoItem = ({ todo, index, priorityImages }: TodoItemProps) => {
 
 		fetchProjectDetails();
 	}, [todo.project]);
-
-	const handleEdit = () => {
-		console.log('clicked edit');
-	};
 
 	return (
 		<>
@@ -80,7 +83,12 @@ const TodoItem = ({ todo, index, priorityImages }: TodoItemProps) => {
 								<BsThreeDots />
 							</Dropdown.Toggle>
 							<Dropdown.Menu>
-								<Dropdown.Item eventKey='1' onClick={handleEdit}>
+								<Dropdown.Item
+									eventKey='1'
+									onClick={() => {
+										setIsEditModalOpen(true);
+									}}
+								>
 									Edit
 								</Dropdown.Item>
 								<Dropdown.Item
@@ -121,17 +129,37 @@ const TodoItem = ({ todo, index, priorityImages }: TodoItemProps) => {
 					id={todo.id}
 				/>
 			)}
+
+			{isEditModalOpen && (
+				<MyEditTodoModal
+					show={isEditModalOpen}
+					onHide={() => setIsEditModalOpen(false)}
+					id={todo.id}
+					todo={todo}
+				/>
+			)}
 		</>
 	);
 };
 
-const TodoList = ({ todos, priorityImages }: TodoListProps) => (
-	<Accordion>
-		{todos.map((todo, index) => (
-			<TodoItem key={index} todo={todo} index={index} priorityImages={priorityImages} />
-		))}
-	</Accordion>
-);
+const TodoList = ({ todos, priorityImages }: TodoListProps) => {
+	const sortedTodos = [...todos].sort((a, b) => {
+		const aDueDate = a.dueDate ? new Date(a.dueDate) : null;
+		const bDueDate = b.dueDate ? new Date(b.dueDate) : null;
+
+		if (!aDueDate) return 1;
+		if (!bDueDate) return -1;
+		return aDueDate.getTime() - bDueDate.getTime();
+	});
+
+	return (
+		<Accordion>
+			{sortedTodos.map((todo, index) => (
+				<TodoItem key={index} todo={todo} index={index} priorityImages={priorityImages} />
+			))}
+		</Accordion>
+	);
+};
 
 const CustomToggle = ({ eventKey }: { eventKey: string }) => {
 	const decoratedOnClick = useAccordionButton(eventKey, () =>
@@ -203,6 +231,213 @@ const MyDeleteConfirmationModal = (props: ModalProps) => {
 				<Button variant='secondary' onClick={props.onHide}>
 					Cancel
 				</Button>
+			</Modal.Footer>
+		</Modal>
+	);
+};
+
+const MyEditTodoModal = (props: ModalProps & { todo: ITodo }) => {
+	const [projects, setProjects] = useState<IProject[]>([]);
+	const [selectedProject, setSelectedProject] = useState('');
+	const [formData, setFormData] = useState<ITodo>({
+		...props.todo,
+		dueDate: props.todo.dueDate
+			? format(new Date(props.todo.dueDate), 'yyyy-MM-dd')
+			: undefined,
+	});
+
+	console.log(formData);
+
+	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		const { name, value, type, checked } = e.target;
+		setFormData((prevFormData) => {
+			return {
+				...prevFormData,
+				[name]: type === 'checkbox' ? checked : value,
+			};
+		});
+	};
+
+	useEffect(() => {
+		const fetchProjects = async () => {
+			const fetchedProjects = await projectService.getProjects();
+			setProjects(fetchedProjects);
+		};
+		fetchProjects();
+	}, []);
+
+	const handleSubmit = async () => {
+		console.log('formData before submit', formData);
+		console.log('Submitting project ID:', formData.project);
+
+		const payload = {
+			...formData,
+			project: formData.project,
+		};
+		await todoService.updateTodo(payload);
+		window.location.reload();
+
+		if (props.onHide) {
+			props.onHide();
+		}
+	};
+
+	const updateProjectState = (project: IProject | null) => {
+		setSelectedProject(project ? project.name : 'Upcoming');
+		setFormData((prevFormData) => ({
+			...prevFormData,
+			project: project ? project.id : null,
+		}));
+	};
+
+	return (
+		<Modal
+			{...props}
+			size='lg'
+			aria-labelledby='contained-modal-title-vcenter'
+			centered
+			className='width'
+		>
+			<Modal.Header closeButton>
+				<Modal.Title id='contained-modal-title-vcenter'>Edit your task!</Modal.Title>
+			</Modal.Header>
+			<Modal.Body>
+				<Form>
+					<Form.Group className='mb-3' controlId='exampleForm.ControlInput1'>
+						<Form.Label>Title</Form.Label>
+						<Form.Control
+							type='text'
+							autoFocus
+							value={formData.title}
+							onChange={handleChange}
+							name='title'
+						/>
+					</Form.Group>
+					<Form.Group className='mb-3' controlId='exampleForm.ControlInput1'>
+						<Form.Label>Description</Form.Label>
+						<Form.Control
+							type='textarea'
+							autoFocus
+							value={formData.todo}
+							onChange={handleChange}
+							name='todo'
+						/>
+					</Form.Group>
+					<Form.Group className='mb-3' controlId='exampleForm.ControlInput1'>
+						<Form.Label>Due Date</Form.Label>
+						<Form.Control
+							type='date'
+							autoFocus
+							value={formData.dueDate}
+							onChange={handleChange}
+							name='dueDate'
+						/>
+					</Form.Group>
+					<h2 className='priority-title'>Priority</h2>
+					<div className='flags'>
+						<div className='priority-container'>
+							<h3 className='priority-subtitle'>None</h3>
+							<Form.Check
+								inline
+								label={
+									<img className='priority-flag' src={greyFlag} alt='no priority flag' />
+								}
+								type='radio'
+								id='none'
+								name='priority'
+								value='none'
+								checked={formData.priority === 'none'}
+								onChange={handleChange}
+							/>
+						</div>
+						<div className='priority-container'>
+							<h3 className='priority-subtitle'>Low</h3>
+							<Form.Check
+								inline
+								label={
+									<img
+										className='priority-flag'
+										src={greenFlag}
+										alt='low priority flag'
+									/>
+								}
+								type='radio'
+								id='low'
+								name='priority'
+								value='low'
+								checked={formData.priority === 'low'}
+								onChange={handleChange}
+							/>
+						</div>
+						<div className='priority-container'>
+							<h3 className='priority-subtitle'>Medium</h3>
+							<Form.Check
+								inline
+								label={
+									<img
+										className='priority-flag'
+										src={orangeFlag}
+										alt='medium priority flag'
+									/>
+								}
+								type='radio'
+								id='medium'
+								name='priority'
+								value='medium'
+								checked={formData.priority === 'medium'}
+								onChange={handleChange}
+							/>
+						</div>
+						<div className='priority-container'>
+							<h3 className='priority-subtitle'>High</h3>
+							<Form.Check
+								inline
+								label={
+									<img className='priority-flag' src={redFlag} alt='high priority flag' />
+								}
+								type='radio'
+								id='high'
+								name='priority'
+								value='high'
+								checked={formData.priority === 'high'}
+								onChange={handleChange}
+							/>
+						</div>
+					</div>
+				</Form>
+			</Modal.Body>
+			<Modal.Footer>
+				<DropdownButton
+					id='dropdown-basic-button'
+					title={selectedProject || 'Select a project'}
+					key={selectedProject}
+				>
+					<Dropdown.Item href='#' onClick={() => updateProjectState(null)}>
+						Upcoming
+					</Dropdown.Item>
+					{projects.map((project) => (
+						<Dropdown.Item
+							key={project.id}
+							href='#'
+							onClick={() => updateProjectState(project)}
+						>
+							{project.name}
+						</Dropdown.Item>
+					))}
+				</DropdownButton>
+				<div className='modal-footer-btns'>
+					<Button
+						variant='primary'
+						onClick={() => {
+							handleSubmit();
+						}}
+					>
+						Add
+					</Button>
+					<Button variant='secondary' onClick={props.onHide}>
+						Close
+					</Button>
+				</div>
 			</Modal.Footer>
 		</Modal>
 	);
