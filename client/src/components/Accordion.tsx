@@ -20,6 +20,8 @@ import orangeFlag from '../assets/orangeflag.png';
 import greenFlag from '../assets/greenflag.png';
 import greyFlag from '../assets/greyflag.png';
 
+// ADD VALIDATION FOR SELECING A PROJECT
+
 interface TodoItemProps {
 	todo: ITodo;
 	index: number;

@@ -17,14 +17,13 @@ const Week = () => {
 
 	useEffect(() => {
 		todoService.getTodos().then((notes) => {
-			console.log(notes);
-			const todaysNotes: ITodo[] = [];
+			const weeklyNotes: ITodo[] = [];
 			notes.forEach((note: ITodo) => {
 				if (note.dueDate && isThisWeek(new Date(note.dueDate))) {
-					todaysNotes.push(note);
+					weeklyNotes.push(note);
 				}
 			});
-			dispatch(setTodos(todaysNotes));
+			dispatch(setTodos(weeklyNotes));
 		});
 	}, [dispatch]);
 

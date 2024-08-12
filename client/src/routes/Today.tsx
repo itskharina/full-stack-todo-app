@@ -17,7 +17,6 @@ const Today = () => {
 
 	useEffect(() => {
 		todoService.getTodos().then((notes) => {
-			console.log(notes);
 			const todaysNotes: ITodo[] = [];
 			notes.forEach((note: ITodo) => {
 				if (note.dueDate && isToday(new Date(note.dueDate))) {

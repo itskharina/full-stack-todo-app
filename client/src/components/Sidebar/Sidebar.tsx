@@ -25,9 +25,6 @@ import orangeFlag from '../../assets/orangeflag.png';
 import greenFlag from '../../assets/greenflag.png';
 import greyFlag from '../../assets/greyflag.png';
 
-// ADD STUFF SO THAT THEY CANT LEAVE ANYTHING BLANK
-// WHEN U ADD TODO MAKE PAGE REFRESH WITH NEW TODO
-
 const MyCreateProjectModal = (props: ModalProps) => {
 	const [inputValue, setInputValue] = useState('');
 
@@ -128,7 +125,7 @@ const MyCreateTodoModal = (props: ModalProps) => {
 	const [projects, setProjects] = useState<IProject[]>([]);
 	const [validated, setValidated] = useState(false);
 	const [selectedProject, setSelectedProject] = useState('');
-	const [priorityChecked, setPriorityChecked] = useState(true);
+	const [priorityError, setPriorityError] = useState(false);
 	const [formData, setFormData] = useState<ITodo>({
 		id: '',
 		title: '',
@@ -165,12 +162,14 @@ const MyCreateTodoModal = (props: ModalProps) => {
 		}
 
 		if (!formData.priority) {
-			setPriorityChecked(false);
+			setPriorityError(true);
 			event.preventDefault();
 			event.stopPropagation();
+		} else {
+			setPriorityError(false);
 		}
 
-		setPriorityChecked(true);
+		// setPriorityError(true);
 		setValidated(true);
 
 		console.log('formData before submit', formData);
@@ -318,7 +317,7 @@ const MyCreateTodoModal = (props: ModalProps) => {
 							/>
 						</div>
 					</div>
-					{!priorityChecked && (
+					{priorityError && (
 						<p className='priority-validation'>Please select a priority.</p>
 					)}
 					<Modal.Footer>
