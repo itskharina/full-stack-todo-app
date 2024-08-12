@@ -16,6 +16,10 @@ $secondColour: #59556d;
 	font-family: 'Poppins', sans-serif;
 }
 
+html {
+	background-color: $backgroundColour;
+}
+
 .week,
 .upcoming,
 .work,
@@ -184,6 +188,8 @@ div.modal-content {
 		justify-content: space-between;
 		border-top: 0;
 		padding: 0;
+		margin-top: 12px;
+		align-items: baseline;
 	}
 
 	.form-label {
@@ -200,9 +206,10 @@ div.modal-content {
 	}
 }
 
-.modal-footer-btns {
+div.modal-footer-btns {
 	display: flex;
 	gap: 10px;
+	margin: 0;
 }
 
 div.dropdown-menu {

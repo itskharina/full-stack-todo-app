@@ -157,4 +157,14 @@ ul.categories {
 .priority-validation {
 	color: #dc3545;
 	font-size: 0.875em;
+	margin: 0;
+}
+
+.project-validation {
+	@extend .priority-validation;
+	margin-top: 12px;
+}
+
+div.dropdown-container {
+	margin: 0;
 }

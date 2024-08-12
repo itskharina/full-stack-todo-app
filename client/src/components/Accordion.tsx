@@ -20,7 +20,7 @@ import orangeFlag from '../assets/orangeflag.png';
 import greenFlag from '../assets/greenflag.png';
 import greyFlag from '../assets/greyflag.png';
 
-// ADD VALIDATION FOR SELECING A PROJECT
+// make it so that when you edit the project its on is pre-selected
 
 interface TodoItemProps {
 	todo: ITodo;
@@ -241,8 +241,9 @@ const MyDeleteConfirmationModal = (props: ModalProps) => {
 const MyEditTodoModal = (props: ModalProps & { todo: ITodo }) => {
 	const [projects, setProjects] = useState<IProject[]>([]);
 	const [validated, setValidated] = useState(false);
-	const [priorityChecked, setPriorityChecked] = useState(true);
-	const [selectedProject, setSelectedProject] = useState('');
+	const [priorityError, setPriorityError] = useState(false);
+	const [projectError, setProjectError] = useState(false);
+	const [selectedProject, setSelectedProject] = useState('Select a project!');
 	const [formData, setFormData] = useState<ITodo>({
 		...props.todo,
 		dueDate: props.todo.dueDate
@@ -272,28 +273,39 @@ const MyEditTodoModal = (props: ModalProps & { todo: ITodo }) => {
 
 	const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
 		const form = event.currentTarget;
-
 		if (form.checkValidity() === false) {
 			event.preventDefault();
 			event.stopPropagation();
 		}
 
+		let isFormValid = true;
+
 		if (!formData.priority) {
-			setPriorityChecked(false);
-			event.preventDefault();
-			event.stopPropagation();
+			setPriorityError(true);
+			isFormValid = false;
+		} else {
+			setPriorityError(false);
 		}
 
-		setPriorityChecked(true);
+		if (selectedProject === 'Select a project!') {
+			setProjectError(true);
+			isFormValid = false;
+		} else {
+			setProjectError(false);
+		}
+
 		setValidated(true);
+
+		if (!isFormValid) {
+			event.preventDefault();
+			event.stopPropagation();
+			return;
+		}
 
 		console.log('formData before submit', formData);
 		console.log('Submitting project ID:', formData.project);
 
-		const payload = {
-			...formData,
-			project: formData.project,
-		};
+		const payload = { ...formData, project: formData.project };
 		await todoService.updateTodo(payload);
 		window.location.reload();
 
@@ -432,28 +444,33 @@ const MyEditTodoModal = (props: ModalProps & { todo: ITodo }) => {
 							/>
 						</div>
 					</div>
-					{!priorityChecked && (
+					{priorityError && (
 						<p className='priority-validation'>Please select a priority.</p>
 					)}
 					<Modal.Footer>
-						<DropdownButton
-							id='dropdown-basic-button'
-							title={selectedProject || 'Select a project'}
-							key={selectedProject}
-						>
-							<Dropdown.Item href='#' onClick={() => updateProjectState(null)}>
-								Upcoming
-							</Dropdown.Item>
-							{projects.map((project) => (
-								<Dropdown.Item
-									key={project.id}
-									href='#'
-									onClick={() => updateProjectState(project)}
-								>
-									{project.name}
+						<div>
+							<DropdownButton
+								id='dropdown-basic-button'
+								title={selectedProject}
+								key={selectedProject}
+							>
+								<Dropdown.Item href='#' onClick={() => updateProjectState(null)}>
+									Upcoming
 								</Dropdown.Item>
-							))}
-						</DropdownButton>
+								{projects.map((project) => (
+									<Dropdown.Item
+										key={project.id}
+										href='#'
+										onClick={() => updateProjectState(project)}
+									>
+										{project.name}
+									</Dropdown.Item>
+								))}
+							</DropdownButton>
+							{projectError && (
+								<p className='project-validation'>Please select a project.</p>
+							)}
+						</div>
 						<div className='modal-footer-btns'>
 							<Button variant='primary' type='submit'>
 								Edit

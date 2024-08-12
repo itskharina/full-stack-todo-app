@@ -124,8 +124,9 @@ const MyDeleteConfirmationModal = (props: ModalProps) => {
 const MyCreateTodoModal = (props: ModalProps) => {
 	const [projects, setProjects] = useState<IProject[]>([]);
 	const [validated, setValidated] = useState(false);
-	const [selectedProject, setSelectedProject] = useState('');
+	const [selectedProject, setSelectedProject] = useState('Select a project!');
 	const [priorityError, setPriorityError] = useState(false);
+	const [projectError, setProjectError] = useState(false);
 	const [formData, setFormData] = useState<ITodo>({
 		id: '',
 		title: '',
@@ -155,30 +156,39 @@ const MyCreateTodoModal = (props: ModalProps) => {
 
 	const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
 		const form = event.currentTarget;
-
 		if (form.checkValidity() === false) {
 			event.preventDefault();
 			event.stopPropagation();
 		}
 
+		let isFormValid = true;
+
 		if (!formData.priority) {
 			setPriorityError(true);
-			event.preventDefault();
-			event.stopPropagation();
+			isFormValid = false;
 		} else {
 			setPriorityError(false);
 		}
 
-		// setPriorityError(true);
+		if (selectedProject === 'Select a project!') {
+			setProjectError(true);
+			isFormValid = false;
+		} else {
+			setProjectError(false);
+		}
+
 		setValidated(true);
+
+		if (!isFormValid) {
+			event.preventDefault();
+			event.stopPropagation();
+			return;
+		}
 
 		console.log('formData before submit', formData);
 		console.log('Submitting project ID:', formData.project);
 
-		const payload = {
-			...formData,
-			project: formData.project,
-		};
+		const payload = { ...formData, project: formData.project };
 		await todoService.createTodo(payload);
 		window.location.reload();
 
@@ -321,24 +331,29 @@ const MyCreateTodoModal = (props: ModalProps) => {
 						<p className='priority-validation'>Please select a priority.</p>
 					)}
 					<Modal.Footer>
-						<DropdownButton
-							id='dropdown-basic-button'
-							title={selectedProject || 'Select a project'}
-							key={selectedProject}
-						>
-							<Dropdown.Item href='#' onClick={() => updateProjectState(null)}>
-								Upcoming
-							</Dropdown.Item>
-							{projects.map((project) => (
-								<Dropdown.Item
-									key={project.id}
-									href='#'
-									onClick={() => updateProjectState(project)}
-								>
-									{project.name}
+						<div className='dropdown-container'>
+							<DropdownButton
+								id='dropdown-basic-button'
+								title={selectedProject}
+								key={selectedProject}
+							>
+								<Dropdown.Item href='#' onClick={() => updateProjectState(null)}>
+									Upcoming
 								</Dropdown.Item>
-							))}
-						</DropdownButton>
+								{projects.map((project) => (
+									<Dropdown.Item
+										key={project.id}
+										href='#'
+										onClick={() => updateProjectState(project)}
+									>
+										{project.name}
+									</Dropdown.Item>
+								))}
+							</DropdownButton>
+							{projectError && (
+								<p className='project-validation'>Please select a project.</p>
+							)}
+						</div>
 						<div className='modal-footer-btns'>
 							<Button variant='primary' type='submit'>
 								Add
