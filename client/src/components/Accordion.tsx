@@ -219,7 +219,7 @@ const MyDeleteConfirmationModal = (props: ModalProps) => {
 				<Modal.Title id='delete-confirm-modal'>Confirm Deletion</Modal.Title>
 			</Modal.Header>
 			<Modal.Body>Are you sure you want to delete this todo?</Modal.Body>
-			<Modal.Footer>
+			<Modal.Footer style={{ padding: '12px' }}>
 				<Button
 					variant='danger'
 					onClick={() => {
@@ -238,6 +238,8 @@ const MyDeleteConfirmationModal = (props: ModalProps) => {
 
 const MyEditTodoModal = (props: ModalProps & { todo: ITodo }) => {
 	const [projects, setProjects] = useState<IProject[]>([]);
+	const [validated, setValidated] = useState(false);
+	const [priorityChecked, setPriorityChecked] = useState(true);
 	const [selectedProject, setSelectedProject] = useState('');
 	const [formData, setFormData] = useState<ITodo>({
 		...props.todo,
@@ -266,7 +268,23 @@ const MyEditTodoModal = (props: ModalProps & { todo: ITodo }) => {
 		fetchProjects();
 	}, []);
 
-	const handleSubmit = async () => {
+	const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+		const form = event.currentTarget;
+
+		if (form.checkValidity() === false) {
+			event.preventDefault();
+			event.stopPropagation();
+		}
+
+		if (!formData.priority) {
+			setPriorityChecked(false);
+			event.preventDefault();
+			event.stopPropagation();
+		}
+
+		setPriorityChecked(true);
+		setValidated(true);
+
 		console.log('formData before submit', formData);
 		console.log('Submitting project ID:', formData.project);
 
@@ -302,8 +320,8 @@ const MyEditTodoModal = (props: ModalProps & { todo: ITodo }) => {
 				<Modal.Title id='contained-modal-title-vcenter'>Edit your task!</Modal.Title>
 			</Modal.Header>
 			<Modal.Body>
-				<Form>
-					<Form.Group className='mb-3' controlId='exampleForm.ControlInput1'>
+				<Form noValidate validated={validated} onSubmit={handleSubmit}>
+					<Form.Group className='mb-3' controlId='title'>
 						<Form.Label>Title</Form.Label>
 						<Form.Control
 							type='text'
@@ -311,9 +329,13 @@ const MyEditTodoModal = (props: ModalProps & { todo: ITodo }) => {
 							value={formData.title}
 							onChange={handleChange}
 							name='title'
+							required
 						/>
+						<Form.Control.Feedback type='invalid'>
+							Please add a title.
+						</Form.Control.Feedback>
 					</Form.Group>
-					<Form.Group className='mb-3' controlId='exampleForm.ControlInput1'>
+					<Form.Group className='mb-3' controlId='description'>
 						<Form.Label>Description</Form.Label>
 						<Form.Control
 							type='textarea'
@@ -321,7 +343,11 @@ const MyEditTodoModal = (props: ModalProps & { todo: ITodo }) => {
 							value={formData.todo}
 							onChange={handleChange}
 							name='todo'
+							required
 						/>
+						<Form.Control.Feedback type='invalid'>
+							Please add a description.
+						</Form.Control.Feedback>
 					</Form.Group>
 					<Form.Group className='mb-3' controlId='exampleForm.ControlInput1'>
 						<Form.Label>Due Date</Form.Label>
@@ -404,41 +430,39 @@ const MyEditTodoModal = (props: ModalProps & { todo: ITodo }) => {
 							/>
 						</div>
 					</div>
+					{!priorityChecked && (
+						<p className='priority-validation'>Please select a priority.</p>
+					)}
+					<Modal.Footer>
+						<DropdownButton
+							id='dropdown-basic-button'
+							title={selectedProject || 'Select a project'}
+							key={selectedProject}
+						>
+							<Dropdown.Item href='#' onClick={() => updateProjectState(null)}>
+								Upcoming
+							</Dropdown.Item>
+							{projects.map((project) => (
+								<Dropdown.Item
+									key={project.id}
+									href='#'
+									onClick={() => updateProjectState(project)}
+								>
+									{project.name}
+								</Dropdown.Item>
+							))}
+						</DropdownButton>
+						<div className='modal-footer-btns'>
+							<Button variant='primary' type='submit'>
+								Edit
+							</Button>
+							<Button variant='secondary' onClick={props.onHide}>
+								Close
+							</Button>
+						</div>
+					</Modal.Footer>
 				</Form>
 			</Modal.Body>
-			<Modal.Footer>
-				<DropdownButton
-					id='dropdown-basic-button'
-					title={selectedProject || 'Select a project'}
-					key={selectedProject}
-				>
-					<Dropdown.Item href='#' onClick={() => updateProjectState(null)}>
-						Upcoming
-					</Dropdown.Item>
-					{projects.map((project) => (
-						<Dropdown.Item
-							key={project.id}
-							href='#'
-							onClick={() => updateProjectState(project)}
-						>
-							{project.name}
-						</Dropdown.Item>
-					))}
-				</DropdownButton>
-				<div className='modal-footer-btns'>
-					<Button
-						variant='primary'
-						onClick={() => {
-							handleSubmit();
-						}}
-					>
-						Add
-					</Button>
-					<Button variant='secondary' onClick={props.onHide}>
-						Close
-					</Button>
-				</div>
-			</Modal.Footer>
 		</Modal>
 	);
 };
