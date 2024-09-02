@@ -62,12 +62,41 @@ const TodoItem = ({ todo, index, priorityImages }: TodoItemProps) => {
 		fetchProjectDetails();
 	}, [todo.project]);
 
+	const completeTodo = async (id: string) => {
+		try {
+			const element = document.getElementById(id);
+			if (element) {
+				element.classList.add('strikethrough');
+
+				setTimeout(async () => {
+					const response = await todoService.deleteTodo(id);
+					if (response.ok) {
+						console.log(`Todo with ID ${id} has been marked as completed.`);
+					} else {
+						console.error(`Failed to mark todo with ID ${id} as completed.`);
+					}
+
+					window.location.reload();
+				}, 150);
+			}
+		} catch (error) {
+			if (error instanceof Error) {
+				console.error(`An error occurred: ${error.message}`);
+			}
+		}
+	};
+
 	return (
 		<>
-			<Card style={{ marginBottom: '20px' }} key={index}>
+			<Card style={{ marginBottom: '20px' }} key={index} id={todo.id}>
 				<Card.Header>
 					<div className='left'>
-						<input type='checkbox' className='checkbox' data-index={index} />
+						<input
+							type='checkbox'
+							className='checkbox'
+							data-index={index}
+							onClick={() => completeTodo(todo.id)}
+						/>
 						<span className='title'>
 							<b>{todo.title}</b>
 						</span>
