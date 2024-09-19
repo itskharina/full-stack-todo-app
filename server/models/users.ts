@@ -5,17 +5,21 @@ interface IUser {
 	username: string;
 	name: string;
 	passwordHash: string;
-	notes: Array<string>;
+	todos: Array<string>;
 }
 
 const userSchema = new Schema<IUser>({
-	username: String,
+	username: {
+		type: String,
+		required: true,
+		unique: true,
+	},
 	name: String,
 	passwordHash: String,
-	notes: [
+	todos: [
 		{
 			type: Schema.Types.ObjectId,
-			ref: 'Note',
+			ref: 'Todo',
 		},
 	],
 });

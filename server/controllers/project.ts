@@ -6,26 +6,18 @@ interface ProjectRequestBody {
 	name: string;
 }
 
-const getProjects = async (
-	_req: Request,
-	res: Response,
-	next: NextFunction
-): Promise<void> => {
+const getProjects = async (_req: Request, res: Response): Promise<Response | void> => {
 	try {
 		const projects = await Project.find({});
 		res.json(projects);
 	} catch (error) {
-		if (error instanceof Error) {
-			error.message = 'Error getting projects';
-		}
-		next(error);
+		return res.status(500).json({ error: 'Error getting projects' });
 	}
 };
 
 const getProjectByName = async (
 	req: Request,
-	res: Response,
-	next: NextFunction
+	res: Response
 ): Promise<Response | void> => {
 	try {
 		const project = await Project.findOne({
@@ -36,18 +28,11 @@ const getProjectByName = async (
 		}
 		res.json(project);
 	} catch (error) {
-		if (error instanceof Error) {
-			error.message = 'Error getting project';
-		}
-		next(error);
+		return res.status(500).json({ error: 'Error getting projects' });
 	}
 };
 
-const getProjectById = async (
-	req: Request,
-	res: Response,
-	next: NextFunction
-): Promise<Response | void> => {
+const getProjectById = async (req: Request, res: Response): Promise<Response | void> => {
 	try {
 		const project = await Project.findOne({
 			name: { $regex: req.params.id, $options: 'i' },
@@ -57,18 +42,11 @@ const getProjectById = async (
 		}
 		res.json(project);
 	} catch (error) {
-		if (error instanceof Error) {
-			error.message = 'Error getting project';
-		}
-		next(error);
+		return res.status(500).json({ error: 'Error getting projects' });
 	}
 };
 
-const createProject = async (
-	req: Request,
-	res: Response,
-	next: NextFunction
-): Promise<Response | void> => {
+const createProject = async (req: Request, res: Response): Promise<Response | void> => {
 	try {
 		const body = req.body as ProjectRequestBody;
 
@@ -90,10 +68,7 @@ const createProject = async (
 
 		res.status(201).json(project);
 	} catch (error) {
-		if (error instanceof Error) {
-			error.message = 'Error creating project';
-		}
-		next(error);
+		return res.status(500).json({ error: 'Error creating project' });
 	}
 };
 

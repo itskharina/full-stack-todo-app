@@ -4,18 +4,12 @@ import { Request, Response, NextFunction } from 'express';
 const errorHandler = (err: Error, _req: Request, res: Response, _next: NextFunction) => {
 	logger.error(err.message, err);
 
-	if (err.message === 'Error getting tasks') {
-		return res.status(500).json({ error: 'Error getting tasks' });
-	} else if (err.message === 'Error adding task') {
-		return res.status(500).json({ error: 'Error adding task' });
-	} else if (err.message === 'Error getting projects') {
-		return res.status(500).json({ error: 'Error getting projects' });
-	} else if (err.message === 'Error adding projects') {
-		return res.status(500).json({ error: 'Error adding projects' });
-	} else if (err.name === 'CastError') {
+	if (err.name === 'CastError') {
 		return res.status(400).json({ error: 'Malformatted id' });
 	} else if (err.name === 'ValidationError') {
 		return res.status(400).json({ error: err.message });
+	} else if (err.message.includes('E11000 duplicate key error')) {
+		return res.status(400).json({ error: 'expected "username" to be unique' });
 	}
 
 	return res.status(500).json({ error: 'Internal server error' });

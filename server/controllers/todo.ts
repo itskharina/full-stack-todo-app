@@ -13,27 +13,16 @@ interface TodoRequestBody {
 	project: string | null;
 }
 
-const getTodos = async (
-	_req: Request,
-	res: Response,
-	next: NextFunction
-): Promise<void> => {
+const getTodos = async (_req: Request, res: Response): Promise<Response | void> => {
 	try {
 		const todos = await Todo.find({}).populate('project');
 		res.json(todos);
 	} catch (error) {
-		if (error instanceof Error) {
-			error.message = 'Error getting tasks';
-		}
-		next(error);
+		return res.status(500).json({ error: 'Error getting tasks' });
 	}
 };
 
-const createTodo = async (
-	req: Request,
-	res: Response,
-	next: NextFunction
-): Promise<Response | void> => {
+const createTodo = async (req: Request, res: Response): Promise<Response | void> => {
 	try {
 		const body = req.body as TodoRequestBody;
 		if (!body.todo || !body.title) {
@@ -65,10 +54,7 @@ const createTodo = async (
 
 		res.status(201).json(todo);
 	} catch (error) {
-		if (error instanceof Error) {
-			error.message = 'Error adding tasks';
-		}
-		next(error);
+		return res.status(500).json({ error: 'Error adding task' });
 	}
 };
 

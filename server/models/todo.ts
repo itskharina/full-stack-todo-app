@@ -6,7 +6,7 @@ interface ITodo extends Document {
 	dueDate?: Date;
 	priority: string;
 	project: mongoose.Types.ObjectId | null;
-	// user: mongoose.Types.ObjectId;
+	user: mongoose.Types.ObjectId;
 }
 
 const todoSchema: Schema = new Schema<ITodo>({
@@ -32,10 +32,10 @@ const todoSchema: Schema = new Schema<ITodo>({
 		ref: 'Project',
 		required: false,
 	},
-	// user: {
-	// 	type: mongoose.Schema.Types.ObjectId,
-	// 	ref: 'User',
-	// },
+	user: {
+		type: mongoose.Schema.Types.ObjectId,
+		ref: 'User',
+	},
 });
 
 todoSchema.set('toJSON', {
