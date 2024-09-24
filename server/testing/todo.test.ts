@@ -3,16 +3,21 @@ import request from 'supertest';
 import app from '../server.js';
 import mongoose from 'mongoose';
 import Todo from '../models/todo.js';
+import User from '../models/users.js';
 
 const api = request(app);
 let testUserId: string;
 
 beforeEach(async () => {
+	await User.deleteMany({});
+
 	const newUser = {
 		username: `${Date.now() + Math.random()}`,
 		name: 'hi',
 		password: 'salainen',
 	};
+
+	await new Promise((resolve) => setTimeout(resolve, 2000));
 
 	const response = await api.post('/users').send(newUser);
 

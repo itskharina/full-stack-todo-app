@@ -34,6 +34,8 @@ describe('POST /users', () => {
 		const passwordHash = await bcrypt.hash('sekret', 10);
 		const user = new User({ username: 'root', passwordHash });
 
+		await new Promise((resolve) => setTimeout(resolve, 2000));
+
 		await user.save();
 	});
 
