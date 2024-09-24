@@ -4,6 +4,7 @@ import User from '../models/users.js';
 import request from 'supertest';
 import app from '../server.js';
 import mongoose from 'mongoose';
+import Todo from '../models/todo.js';
 
 const api = request(app);
 
@@ -30,6 +31,7 @@ describe('GET /users', () => {
 describe('POST /users', () => {
 	beforeEach(async () => {
 		await User.deleteMany({});
+		await Todo.deleteMany({});
 
 		const passwordHash = await bcrypt.hash('sekret', 10);
 		const user = new User({ username: 'root', passwordHash });
