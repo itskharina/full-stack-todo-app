@@ -213,7 +213,6 @@ describe('/PUT todos/id', () => {
 });
 
 afterAll(async () => {
-	// await User.deleteMany({});
 	await mongoose.connection.close();
 	console.log('Server closed');
 });

@@ -38,16 +38,12 @@ const createUser = async (
 	}
 };
 
-const getUsers = async (
-	_req: Request,
-	res: Response,
-	next: NextFunction
-): Promise<void> => {
+const getUsers = async (_req: Request, res: Response): Promise<Response | void> => {
 	try {
 		const users = await User.find({}).populate('todos', { title: 1, todo: 1 });
 		res.json(users);
 	} catch (error) {
-		next(error);
+		return res.status(500).json({ error: 'Error getting users' });
 	}
 };
 

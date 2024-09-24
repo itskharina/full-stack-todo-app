@@ -1,12 +1,33 @@
 import bcrypt from 'bcrypt';
-import { describe, it, beforeEach, expect } from 'vitest';
+import { describe, it, beforeEach, expect, vi, afterAll } from 'vitest';
 import User from '../models/users.js';
 import request from 'supertest';
 import app from '../server.js';
+import mongoose from 'mongoose';
 
 const api = request(app);
 
-describe('when there is initially one user in db', () => {
+describe('GET /users', () => {
+	it('users are returned as json', async () => {
+		const response = await api.get('/users');
+		expect(response.status).toBe(200);
+		expect(response.headers['content-type']).toMatch(/application\/json/);
+	});
+
+	it('should return an error message when getting users fails', async () => {
+		vi.spyOn(User, 'find').mockImplementationOnce(() => {
+			throw new Error('Database error');
+		});
+
+		const response = await api.get('/users');
+		expect(response.status).toBe(500);
+		expect(response.body).toEqual({ error: 'Error getting users' });
+
+		vi.restoreAllMocks();
+	});
+});
+
+describe('POST /users', () => {
 	beforeEach(async () => {
 		await User.deleteMany({});
 
@@ -22,9 +43,9 @@ describe('when there is initially one user in db', () => {
 		);
 
 		const newUser = {
-			username: 'mluukkai',
-			name: 'Matti Luukkainen',
-			password: 'salainen',
+			username: 'itsanna',
+			name: 'Testing User Creation',
+			password: 'testing',
 		};
 
 		await api
@@ -69,4 +90,28 @@ describe('when there is initially one user in db', () => {
 
 		expect(usersAtEnd.length).toEqual(usersAtStart.length);
 	});
+
+	describe('DELETE /users', () => {
+		it('delete request works', async () => {
+			const newUser = {
+				username: 'itsanna1',
+				name: 'Testing User Delete',
+				password: 'testing',
+			};
+
+			const deleteResponse = await api.post('/users').send(newUser).expect(201);
+
+			const deleteUserId = deleteResponse.body.id.toString();
+
+			const response = await api.delete(`/todos/${deleteUserId}`);
+			expect(response.status).toBe(204);
+			expect(response.body).toEqual({});
+		});
+	});
+});
+
+afterAll(async () => {
+	await User.deleteMany({});
+	await mongoose.connection.close();
+	console.log('Server closed');
 });
