@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call */
 import { describe, it, afterAll, beforeEach, expect, vi } from 'vitest';
 import request from 'supertest';
 import app from '../server.js';
@@ -6,6 +5,20 @@ import mongoose from 'mongoose';
 import Todo from '../models/todo.js';
 
 const api = request(app);
+let testUserId: string;
+
+beforeEach(async () => {
+	const newUser = {
+		username: `${Date.now() + Math.random()}`,
+		name: 'hi',
+		password: 'salainen',
+	};
+
+	const response = await api.post('/users').send(newUser);
+
+	expect(response.status).toBe(201);
+	testUserId = response.body.id.toString();
+});
 
 describe('GET /todos', () => {
 	it('notes are returned as json', async () => {
@@ -34,6 +47,7 @@ describe('POST /todos', () => {
 			todo: 'Test Todo',
 			dueDate: '2024-08-08',
 			priority: 'high',
+			id: testUserId,
 		};
 
 		const response = await api
@@ -59,6 +73,7 @@ describe('POST /todos', () => {
 			todo: 'Test Todo',
 			dueDate: '',
 			priority: 'high',
+			id: testUserId,
 		};
 
 		const response = await api
@@ -73,7 +88,6 @@ describe('POST /todos', () => {
 	});
 
 	it('should add the todo to a project', async () => {
-		// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 		const testProjectId: string = (
 			await api
 				.post('/projects')
@@ -87,6 +101,7 @@ describe('POST /todos', () => {
 			dueDate: '2024-08-08',
 			priority: 'high',
 			project: testProjectId,
+			id: testUserId,
 		};
 
 		const todoResponse = await api
@@ -113,6 +128,7 @@ describe('/DELETE todos/id', () => {
 			todo: 'Test Todo for Deletion',
 			dueDate: '2024-10-04',
 			priority: 'low',
+			id: testUserId,
 		};
 
 		const response = await api
@@ -121,7 +137,6 @@ describe('/DELETE todos/id', () => {
 			.send(testTodo);
 
 		expect(response.status).toBe(201);
-		// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 		testTodoId = response.body.id.toString();
 	});
 
@@ -146,6 +161,7 @@ describe('/PUT todos/id', () => {
 		todo: 'Updated Todo',
 		dueDate: '',
 		priority: 'none',
+		id: testUserId,
 	};
 
 	beforeEach(async () => {
@@ -154,6 +170,7 @@ describe('/PUT todos/id', () => {
 			todo: 'Test Todo to Update',
 			dueDate: '2024-08-08',
 			priority: 'medium',
+			id: testUserId,
 		};
 
 		const response = await api
@@ -162,7 +179,6 @@ describe('/PUT todos/id', () => {
 			.send(testTodo);
 
 		expect(response.status).toBe(201);
-		// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 		testTodoId = response.body.id.toString();
 	});
 
@@ -187,6 +203,7 @@ describe('/PUT todos/id', () => {
 			todo: '',
 			dueDate: '2024-08-08',
 			priority: 'high',
+			id: testUserId,
 		};
 
 		const response = await api.put(`/todos/${testTodoId}`).send(emptyTodo);
@@ -196,6 +213,7 @@ describe('/PUT todos/id', () => {
 });
 
 afterAll(async () => {
+	// await User.deleteMany({});
 	await mongoose.connection.close();
 	console.log('Server closed');
 });

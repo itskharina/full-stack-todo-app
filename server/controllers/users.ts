@@ -1,8 +1,10 @@
 import User from '../models/users.js';
+import Todo from '../models/todo.js';
 import { Request, Response, NextFunction } from 'express';
 import bcrypt from 'bcrypt';
 
 interface UserRequestBody {
+	id: string;
 	username: string;
 	name: string;
 	password: string;
@@ -42,8 +44,22 @@ const getUsers = async (
 	next: NextFunction
 ): Promise<void> => {
 	try {
-		const users = await User.find({}).populate('todos', { todos: 1 });
+		const users = await User.find({}).populate('todos', { title: 1, todo: 1 });
 		res.json(users);
+	} catch (error) {
+		next(error);
+	}
+};
+
+const deleteUser = async (
+	req: Request,
+	res: Response,
+	next: NextFunction
+): Promise<void> => {
+	try {
+		await Todo.deleteMany({ user: req.params.id });
+		await User.findByIdAndDelete(req.params.id);
+		res.status(204).end();
 	} catch (error) {
 		next(error);
 	}
@@ -52,4 +68,5 @@ const getUsers = async (
 export default {
 	createUser,
 	getUsers,
+	deleteUser,
 };

@@ -1,6 +1,6 @@
 import mongoose, { Document, Schema } from 'mongoose';
 
-interface ITodo extends Document {
+interface ITodo {
 	title: string;
 	todo: string;
 	dueDate?: Date;

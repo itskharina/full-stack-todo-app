@@ -1,11 +1,11 @@
 import Todo from '../models/todo.js';
 import Project from '../models/project.js';
+import User from '../models/users.js';
 import { Request, Response, NextFunction } from 'express';
 import { Types } from 'mongoose';
 
-// import User from '../models/users';
-
 interface TodoRequestBody {
+	id: string;
 	title: string;
 	todo: string;
 	dueDate?: Date;
@@ -15,7 +15,9 @@ interface TodoRequestBody {
 
 const getTodos = async (_req: Request, res: Response): Promise<Response | void> => {
 	try {
-		const todos = await Todo.find({}).populate('project');
+		const todos = await Todo.find({})
+			.populate('user', { username: 1, name: 1 })
+			.populate('project', { name: 1 });
 		res.json(todos);
 	} catch (error) {
 		return res.status(500).json({ error: 'Error getting tasks' });
@@ -29,17 +31,26 @@ const createTodo = async (req: Request, res: Response): Promise<Response | void>
 			return res.status(400).json({ error: 'Content missing' });
 		}
 
+		const user = await User.findById(body.id);
+
+		if (!user) {
+			return res.status(404).json({ error: 'User not found' });
+		}
+
 		const todo = new Todo({
 			title: body.title,
 			todo: body.todo,
 			dueDate: body.dueDate,
 			priority: body.priority,
 			project: body.project ? new Types.ObjectId(body.project) : null,
+			user: user._id,
 		});
 
 		console.log('About to save todo:', todo);
 
 		await todo.save();
+		user.todos.push(todo._id);
+		await user.save();
 
 		console.log('Saved todo:', todo);
 
@@ -48,7 +59,7 @@ const createTodo = async (req: Request, res: Response): Promise<Response | void>
 			if (!project) {
 				return res.status(400).json({ error: 'Project not found' });
 			}
-			project.todos.push(todo._id as Types.ObjectId);
+			project.todos.push(todo._id);
 			await project.save();
 		}
 

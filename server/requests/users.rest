@@ -9,3 +9,16 @@ Content-Type: application/json
     "name": "Supertest",
     "password": "testing"
 }
+
+###
+POST http://localhost:3001/users
+Content-Type: application/json
+
+{
+    "username": "to delete",
+    "name": "Deleting!",
+    "password": "delete"
+}
+
+###
+DELETE http://localhost:3001/users/66f3330df54673089338addf

@@ -1,6 +1,6 @@
 import mongoose, { Document, Schema } from 'mongoose';
 
-interface IProject extends Document {
+interface IProject {
 	name: string;
 	todos: mongoose.Types.ObjectId[];
 }

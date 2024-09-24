@@ -6,11 +6,12 @@ POST http://localhost:3001/todos
 Content-Type: application/json
 
 {		
-		"title": "test project empty",
-		"todo": "lol",
+		"title": "test user",
+		"todo": "user",
 		"dueDate": "2024-05-24",
 		"priority": "medium",
-		"project": ""
+		"project": "",
+		"id": "66ec7fddc0d3c218209e9441"
 }
 
 ###
@@ -19,11 +20,12 @@ POST http://localhost:3001/todos
 Content-Type: application/json
 
 {		
-		"title": "testing project called 'test'",
+		"title": "testing user with project called 'school'",
 		"todo": "test",
 		"dueDate": "",
 		"priority": "none",
-		"project": "6695c6ae101c0df94fcb2ae7"
+		"project": "6695c05c1889af8a171b2dd7",
+		"id": "66ec7fddc0d3c218209e9441"
 }
 
 ###
