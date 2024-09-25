@@ -25,7 +25,7 @@ beforeEach(async () => {
 		password: 'salainen',
 	};
 
-	await new Promise((resolve) => setTimeout(resolve, 2000));
+	// await new Promise((resolve) => setTimeout(resolve, 2000));
 
 	const response = await api.post('/users').send(newUser);
 
