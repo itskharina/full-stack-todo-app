@@ -97,6 +97,13 @@ describe('POST /users', () => {
 
 	describe('DELETE /users', () => {
 		it('delete request works', async () => {
+			interface UserResponse {
+				id: string;
+				username: string;
+				name: string;
+				todos: string[];
+			}
+
 			const newUser = {
 				username: 'itsanna1',
 				name: 'Testing User Delete',
@@ -105,7 +112,7 @@ describe('POST /users', () => {
 
 			const deleteResponse = await api.post('/users').send(newUser).expect(201);
 
-			const deleteUserId = deleteResponse.body.id.toString();
+			const deleteUserId = (deleteResponse.body as UserResponse).id.toString();
 
 			const response = await api.delete(`/todos/${deleteUserId}`);
 			expect(response.status).toBe(204);

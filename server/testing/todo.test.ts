@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-call */
 import { describe, it, afterAll, beforeEach, expect, vi } from 'vitest';
 import request from 'supertest';
 import app from '../server.js';
@@ -7,6 +8,13 @@ import User from '../models/users.js';
 
 const api = request(app);
 let testUserId: string;
+
+interface UserResponse {
+	id: string;
+	username: string;
+	name: string;
+	todos: string[];
+}
 
 beforeEach(async () => {
 	await User.deleteMany({});
@@ -22,7 +30,7 @@ beforeEach(async () => {
 	const response = await api.post('/users').send(newUser);
 
 	expect(response.status).toBe(201);
-	testUserId = response.body.id.toString();
+	testUserId = (response.body as UserResponse).id.toString();
 });
 
 describe('GET /todos', () => {
@@ -93,12 +101,18 @@ describe('POST /todos', () => {
 	});
 
 	it('should add the todo to a project', async () => {
-		const testProjectId: string = (
-			await api
-				.post('/projects')
-				.set('Content-Type', 'application/json')
-				.send({ name: 'Testing!' })
-		).body.id.toString();
+		interface ProjectResponse {
+			id: string;
+			name: string;
+			todos: string[];
+		}
+
+		const response = await api
+			.post('/projects')
+			.set('Content-Type', 'application/json')
+			.send({ name: 'Testing!' });
+
+		const testProjectId = (response.body as ProjectResponse).id.toString();
 
 		const testTodo = {
 			title: 'Testing!',
@@ -142,7 +156,7 @@ describe('/DELETE todos/id', () => {
 			.send(testTodo);
 
 		expect(response.status).toBe(201);
-		testTodoId = response.body.id.toString();
+		testTodoId = (response.body as UserResponse).id.toString();
 	});
 
 	it('delete request works', async () => {
@@ -166,7 +180,6 @@ describe('/PUT todos/id', () => {
 		todo: 'Updated Todo',
 		dueDate: '',
 		priority: 'none',
-		id: testUserId,
 	};
 
 	beforeEach(async () => {
@@ -184,10 +197,12 @@ describe('/PUT todos/id', () => {
 			.send(testTodo);
 
 		expect(response.status).toBe(201);
-		testTodoId = response.body.id.toString();
+		testTodoId = (response.body as UserResponse).id.toString();
 	});
 
 	it('put request works', async () => {
+		console.log('testTodoId', testTodoId);
+		console.log(updateTodo);
 		const response = await api.put(`/todos/${testTodoId}`).send(updateTodo);
 		expect(response.status).toBe(200);
 		expect(response.body.title).toEqual('Updating!');

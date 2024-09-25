@@ -121,9 +121,9 @@ const updateTodo = async (
 
 			const newProject = await Project.findById(body.project);
 			if (newProject) {
-				newProject.todos.push(existingTodo._id as Types.ObjectId);
+				newProject.todos.push(existingTodo._id);
 				await newProject.save();
-				existingTodo.project = newProject._id as Types.ObjectId;
+				existingTodo.project = newProject._id;
 			}
 		} else {
 			existingTodo.project = null;
