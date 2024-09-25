@@ -4,6 +4,7 @@ import User from '../models/users.js';
 import request from 'supertest';
 import app from '../server.js';
 import mongoose from 'mongoose';
+import Todo from '../models/todo.js';
 
 const api = request(app);
 
@@ -30,9 +31,12 @@ describe('GET /users', () => {
 describe('POST /users', () => {
 	beforeEach(async () => {
 		await User.deleteMany({});
+		await Todo.deleteMany({});
 
 		const passwordHash = await bcrypt.hash('sekret', 10);
 		const user = new User({ username: 'root', passwordHash });
+
+		await new Promise((resolve) => setTimeout(resolve, 2000));
 
 		await user.save();
 	});
@@ -93,6 +97,13 @@ describe('POST /users', () => {
 
 	describe('DELETE /users', () => {
 		it('delete request works', async () => {
+			interface UserResponse {
+				id: string;
+				username: string;
+				name: string;
+				todos: string[];
+			}
+
 			const newUser = {
 				username: 'itsanna1',
 				name: 'Testing User Delete',
@@ -101,7 +112,7 @@ describe('POST /users', () => {
 
 			const deleteResponse = await api.post('/users').send(newUser).expect(201);
 
-			const deleteUserId = deleteResponse.body.id.toString();
+			const deleteUserId = (deleteResponse.body as UserResponse).id.toString();
 
 			const response = await api.delete(`/todos/${deleteUserId}`);
 			expect(response.status).toBe(204);

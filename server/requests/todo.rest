@@ -34,11 +34,11 @@ DELETE http://localhost:3001/todos/6695cdb29e6a2fca27344ada
 
 ###
 
-PUT http://localhost:3001/todos/668be0fde340448a748d54dc
+PUT http://localhost:3001/todos/66f3246142ec7f5ae30fe585
 Content-Type: application/json
 
 {
-		"title": "Updating Todo!",
+		"title": "Updating Todo Testing User!",
 		"todo": "Updated Todo",
 		"dueDate": "",
 		"priority": "high"
