@@ -6,6 +6,7 @@ import errorHandler from './middleware/errorHandler.js';
 import todoRouter from './routes/todo.js';
 import projectRouter from './routes/project.js';
 import usersRouter from './routes/users.js';
+import loginRouter from './routes/login.js';
 
 const app = express();
 
@@ -14,6 +15,7 @@ app.use(express.json());
 app.use('/todos', todoRouter);
 app.use('/projects', projectRouter);
 app.use('/users', usersRouter);
+app.use('/login', loginRouter);
 app.use(errorHandler);
 
 if (process.env.NODE_ENV !== 'test') {

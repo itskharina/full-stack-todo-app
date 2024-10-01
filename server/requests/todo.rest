@@ -15,17 +15,19 @@ Content-Type: application/json
 }
 
 ###
+// BEARER IS TOKEN
 
 POST http://localhost:3001/todos
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Iml0c2toYXJpbmEiLCJpZCI6IjY2ZmMyYmU4Mjc1ZGEyNzlkNTExNTllZiIsImlhdCI6MTcyNzgxNDUxN30.ovL3dTDhIdKQVXUnVsha1Q72VYHvc712B9HLHomq4bg
 
 {		
-		"title": "testing user with project called 'school'",
+		"title": "testing user AGAIN!!! itskharina'",
 		"todo": "test",
-		"dueDate": "",
+		"dueDate": "2025-08-08",
 		"priority": "none",
-		"project": "6695c05c1889af8a171b2dd7",
-		"id": "66ec7fddc0d3c218209e9441"
+		"project": "",
+		"id": "66fc2be8275da279d51159ef"
 }
 
 ###

@@ -3,6 +3,13 @@ import Project from '../models/project.js';
 import User from '../models/users.js';
 import { Request, Response, NextFunction } from 'express';
 import { Types } from 'mongoose';
+import jwt from 'jsonwebtoken';
+
+const SECRET = process.env.SECRET;
+
+if (!SECRET) {
+	throw new Error('No SECRET environment variable is set');
+}
 
 interface TodoRequestBody {
 	id: string;
@@ -12,6 +19,19 @@ interface TodoRequestBody {
 	priority: string;
 	project: string | null;
 }
+
+interface DecodedToken {
+	id: string;
+	username: string;
+}
+
+const getTokenFrom = (req: Request) => {
+	const authorization = req.get('authorization');
+	if (authorization && authorization.startsWith('Bearer ')) {
+		return authorization.replace('Bearer ', '');
+	}
+	return null;
+};
 
 const getTodos = async (_req: Request, res: Response): Promise<Response | void> => {
 	try {
@@ -31,7 +51,16 @@ const createTodo = async (req: Request, res: Response): Promise<Response | void>
 			return res.status(400).json({ error: 'Content missing' });
 		}
 
-		const user = await User.findById(body.id);
+		const token = getTokenFrom(req);
+		if (!token) {
+			return res.status(401).json({ error: 'No token provided' });
+		}
+
+		const decodedToken = jwt.verify(token, SECRET) as DecodedToken;
+		if (!decodedToken.id) {
+			return res.status(401).json({ error: 'Token invalid' });
+		}
+		const user = await User.findById(decodedToken.id);
 
 		if (!user) {
 			return res.status(404).json({ error: 'User not found' });
@@ -65,7 +94,13 @@ const createTodo = async (req: Request, res: Response): Promise<Response | void>
 
 		res.status(201).json(todo);
 	} catch (error) {
-		return res.status(500).json({ error: 'Error adding task' });
+		if (error instanceof Error) {
+			if (error.name === 'JsonWebTokenError') {
+				return res.status(401).json({ error: 'Token invalid' });
+			} else {
+				return res.status(500).json({ error: 'Error adding task' });
+			}
+		}
 	}
 };
 
