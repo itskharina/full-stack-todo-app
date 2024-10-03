@@ -35,7 +35,7 @@ beforeEach(async () => {
 
 	const loginResponse = await api.post('/login').send(newUser);
 
-	authToken = loginResponse.body.token;
+	authToken = loginResponse.body.token as string;
 });
 
 describe('GET /todos', () => {
