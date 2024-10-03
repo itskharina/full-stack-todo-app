@@ -19,15 +19,15 @@ Content-Type: application/json
 
 POST http://localhost:3001/todos
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Iml0c2toYXJpbmEiLCJpZCI6IjY2ZmMyYmU4Mjc1ZGEyNzlkNTExNTllZiIsImlhdCI6MTcyNzgxNDUxN30.ovL3dTDhIdKQVXUnVsha1Q72VYHvc712B9HLHomq4bg
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Iml0c3JldiIsImlkIjoiNjZmY2JhODQ1MzdkOWEyOGNjMTk0ZDQ4IiwiaWF0IjoxNzI3ODM4OTAwfQ.ZAiwGrxSafzPD02AHsOJnAn-aK7UvW7CKy_R7WnlBg8
 
 {		
-		"title": "testing user AGAIN!!! itskharina'",
+		"title": "testing user itsrev'",
 		"todo": "test",
 		"dueDate": "2025-08-08",
 		"priority": "none",
 		"project": "",
-		"id": "66fc2be8275da279d51159ef"
+		"id": "66fcba84537d9a28cc194d48"
 }
 
 ###

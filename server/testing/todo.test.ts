@@ -8,6 +8,7 @@ import User from '../models/users.js';
 
 const api = request(app);
 let testUserId: string;
+let authToken: string;
 
 interface UserResponse {
 	id: string;
@@ -31,6 +32,10 @@ beforeEach(async () => {
 
 	expect(response.status).toBe(201);
 	testUserId = (response.body as UserResponse).id.toString();
+
+	const loginResponse = await api.post('/login').send(newUser);
+
+	authToken = loginResponse.body.token;
 });
 
 describe('GET /todos', () => {
@@ -66,6 +71,7 @@ describe('POST /todos', () => {
 		const response = await api
 			.post('/todos')
 			.set('Content-Type', 'application/json')
+			.set('Authorization', `Bearer ${authToken}`)
 			.send(testTodo);
 		expect(response.status).toBe(201);
 		expect(response.body.title).toEqual('Testing!');
@@ -92,6 +98,7 @@ describe('POST /todos', () => {
 		const response = await api
 			.post('/todos')
 			.set('Content-Type', 'application/json')
+			.set('Authorization', `Bearer ${authToken}`)
 			.send(testTodo);
 		expect(response.status).toBe(201);
 		expect(response.body.title).toEqual('Testing!');
@@ -110,6 +117,7 @@ describe('POST /todos', () => {
 		const response = await api
 			.post('/projects')
 			.set('Content-Type', 'application/json')
+			.set('Authorization', `Bearer ${authToken}`)
 			.send({ name: 'Testing!' });
 
 		const testProjectId = (response.body as ProjectResponse).id.toString();
@@ -126,6 +134,7 @@ describe('POST /todos', () => {
 		const todoResponse = await api
 			.post('/todos')
 			.set('Content-Type', 'application/json')
+			.set('Authorization', `Bearer ${authToken}`)
 			.send(testTodo);
 
 		expect(todoResponse.status).toBe(201);
@@ -153,6 +162,7 @@ describe('/DELETE todos/id', () => {
 		const response = await api
 			.post('/todos')
 			.set('Content-Type', 'application/json')
+			.set('Authorization', `Bearer ${authToken}`)
 			.send(testTodo);
 
 		expect(response.status).toBe(201);
@@ -194,6 +204,7 @@ describe('/PUT todos/id', () => {
 		const response = await api
 			.post('/todos')
 			.set('Content-Type', 'application/json')
+			.set('Authorization', `Bearer ${authToken}`)
 			.send(testTodo);
 
 		expect(response.status).toBe(201);
@@ -233,6 +244,7 @@ describe('/PUT todos/id', () => {
 });
 
 afterAll(async () => {
+	await User.deleteMany({});
 	await mongoose.connection.close();
 	console.log('Server closed');
 });

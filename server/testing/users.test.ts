@@ -36,7 +36,7 @@ describe('POST /users', () => {
 		const passwordHash = await bcrypt.hash('sekret', 10);
 		const user = new User({ username: 'root', passwordHash });
 
-		await new Promise((resolve) => setTimeout(resolve, 2000));
+		// await new Promise((resolve) => setTimeout(resolve, 2000));
 
 		await user.save();
 	});
@@ -45,6 +45,8 @@ describe('POST /users', () => {
 		const usersAtStart = await User.find({}).then((users) =>
 			users.map((user) => user.toJSON())
 		);
+
+		console.log('start', usersAtStart);
 
 		const newUser = {
 			username: 'itsanna',
@@ -86,7 +88,7 @@ describe('POST /users', () => {
 			.expect('Content-Type', /application\/json/);
 
 		expect(response.status).toBe(400);
-		expect(response.body).toEqual({ error: 'expected "username" to be unique' });
+		expect(response.body).toEqual({ error: 'Expected "username" to be unique' });
 
 		const usersAtEnd = await User.find({}).then((users) =>
 			users.map((user) => user.toJSON())

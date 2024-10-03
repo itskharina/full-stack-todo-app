@@ -1,0 +1,101 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+
+$firstColour: #f1eef7;
+$secondColour: #46425b;
+
+@mixin flex($direction) {
+	display: flex;
+	flex-direction: $direction;
+	align-items: center;
+}
+
+body {
+	font-family: 'Inter', sans-serif;
+}
+
+.right-side {
+	width: 50%;
+	background-color: $firstColour;
+	min-height: 100vh;
+	@include flex(column);
+	justify-content: center;
+
+	.login-form {
+		width: 70%;
+		margin: 0 auto;
+
+		.login-form-top-text {
+			@include flex(column);
+			justify-content: center;
+			color: $secondColour;
+			gap: 10px;
+			margin-bottom: 20px;
+
+			.welcome-back {
+				font-size: 19px;
+			}
+
+			.login-form-title {
+				font-size: 64px;
+				font-weight: 600;
+			}
+		}
+
+		.login-form-item {
+			display: flex;
+			flex-direction: column;
+
+			label {
+				color: $secondColour;
+				margin-bottom: 5px;
+			}
+
+			.login-input {
+				width: 100%;
+				height: 60px;
+				outline: none;
+				border: 1px solid #93919e;
+				border-radius: 5px;
+				font-size: 16px;
+				padding-left: 15px;
+				color: $secondColour;
+			}
+		}
+
+		.login-form-item + .login-form-item {
+			margin-top: 25px;
+			margin-bottom: 52px;
+		}
+
+		.login-form-item > * {
+			align-self: flex-start;
+		}
+
+		.login-button {
+			width: 100%;
+			height: 60px;
+			border: 0;
+			border-radius: 5px;
+			background-color: #59556d;
+			color: $firstColour;
+			font-family: 'Inter', sans-serif;
+			font-size: 19px;
+			cursor: pointer;
+
+			&:active {
+				transform: translateY(4px);
+			}
+		}
+	}
+
+	.sign-up-option {
+		margin-top: 40px;
+		text-align: center;
+		color: $secondColour;
+
+		a {
+			color: $secondColour;
+			font-weight: 500;
+		}
+	}
+}

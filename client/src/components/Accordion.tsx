@@ -206,7 +206,7 @@ const CustomToggle = ({ eventKey }: { eventKey: string }) => {
 
 interface CustomDropDownProps {
 	children: React.ReactNode;
-	onClick: (event: React.MouseEvent<HTMLAnchorElement>) => void;
+	onClick: (e: React.MouseEvent<HTMLAnchorElement>) => void;
 }
 
 const CustomDropDown = React.forwardRef<HTMLAnchorElement, CustomDropDownProps>(
@@ -301,11 +301,11 @@ const MyEditTodoModal = (props: ModalProps & { todo: ITodo }) => {
 		fetchProjects();
 	}, []);
 
-	const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-		const form = event.currentTarget;
+	const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+		const form = e.currentTarget;
 		if (form.checkValidity() === false) {
-			event.preventDefault();
-			event.stopPropagation();
+			e.preventDefault();
+			e.stopPropagation();
 		}
 
 		let isFormValid = true;
@@ -327,8 +327,8 @@ const MyEditTodoModal = (props: ModalProps & { todo: ITodo }) => {
 		setValidated(true);
 
 		if (!isFormValid) {
-			event.preventDefault();
-			event.stopPropagation();
+			e.preventDefault();
+			e.stopPropagation();
 			return;
 		}
 

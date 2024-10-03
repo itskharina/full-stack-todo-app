@@ -3,6 +3,11 @@ import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import User from '../models/users.js';
 
+interface LoginRequestBody {
+	username: string;
+	password: string;
+}
+
 const SECRET = process.env.SECRET;
 
 if (!SECRET) {
@@ -10,11 +15,11 @@ if (!SECRET) {
 }
 
 const createLogin = async (req: Request, res: Response): Promise<Response | void> => {
-	const { username, password } = req.body;
+	const body = req.body as LoginRequestBody;
 
-	const user = await User.findOne({ username });
+	const user = await User.findOne({ username: body.username });
 	const passwordCorrect =
-		user === null ? false : await bcrypt.compare(password, user.passwordHash);
+		user === null ? false : await bcrypt.compare(body.password, user.passwordHash);
 
 	if (!(user && passwordCorrect)) {
 		return res.status(401).json({
