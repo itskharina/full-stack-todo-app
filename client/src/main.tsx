@@ -9,25 +9,35 @@ import { Provider } from 'react-redux';
 import store from './store/store';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { SidebarProvider } from './components/Sidebar/SidebarProvider';
+import Login from './routes/Login';
+import Signup from './routes/Signup';
 
 const router = createBrowserRouter([
+	{
+		path: '/',
+		element: <Login />,
+	},
+	{
+		path: '/signup',
+		element: <Signup />,
+	},
 	{
 		element: <App />,
 		children: [
 			{
-				path: '/',
+				path: '/upcoming',
 				element: <Upcoming />,
 			},
 			{
-				path: 'today',
+				path: '/today',
 				element: <Today />,
 			},
 			{
-				path: 'week',
+				path: '/week',
 				element: <Week />,
 			},
 			{
-				path: 'projects/:projectName',
+				path: '/projects/:projectName',
 				element: <Project />,
 			},
 		],

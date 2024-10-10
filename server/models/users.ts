@@ -2,14 +2,14 @@ import mongoose, { Document, Schema } from 'mongoose';
 
 interface IUser {
 	id: string;
-	username: string;
+	email: string;
 	name: string;
 	passwordHash: string;
 	todos: mongoose.Types.ObjectId[];
 }
 
 const userSchema = new Schema<IUser>({
-	username: {
+	email: {
 		type: String,
 		required: true,
 		unique: true,
@@ -23,6 +23,13 @@ const userSchema = new Schema<IUser>({
 		},
 	],
 });
+
+const emailValidator = (email: string) => {
+	// Add your custom validation logic here, e.g., using regular expressions
+	return email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/);
+};
+
+userSchema.path('email').validate(emailValidator, 'Invalid email format');
 
 userSchema.set('toJSON', {
 	transform: (_document: Document, returnedObject: Record<string, unknown>) => {

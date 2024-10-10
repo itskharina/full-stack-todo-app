@@ -34,6 +34,7 @@ const MyCreateProjectModal = (props: ModalProps) => {
 		if (props.onHide) {
 			props.onHide();
 		}
+		window.location.reload();
 	};
 
 	return (
@@ -80,7 +81,8 @@ const MyDeleteConfirmationModal = (props: ModalProps) => {
 			if (response.ok) {
 				console.log(`Project with ID ${id} deleted successfully.`);
 				setProjectsUpdated(!projectsUpdated);
-				navigate('/');
+				navigate('/upcoming');
+				window.location.reload();
 			} else {
 				console.error(`Failed to delete project with ID ${id}.`);
 			}

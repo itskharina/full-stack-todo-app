@@ -34,14 +34,14 @@ describe('POST /users', () => {
 		await Todo.deleteMany({});
 
 		const passwordHash = await bcrypt.hash('sekret', 10);
-		const user = new User({ username: 'root', passwordHash });
+		const user = new User({ email: 'root@gmail.com', passwordHash });
 
 		// await new Promise((resolve) => setTimeout(resolve, 2000));
 
 		await user.save();
 	});
 
-	it('creation succeeds with a fresh username', async () => {
+	it('creation succeeds with a fresh email', async () => {
 		const usersAtStart = await User.find({}).then((users) =>
 			users.map((user) => user.toJSON())
 		);
@@ -49,7 +49,7 @@ describe('POST /users', () => {
 		console.log('start', usersAtStart);
 
 		const newUser = {
-			username: 'itsanna',
+			email: 'itsanna@gmail.com',
 			name: 'Testing User Creation',
 			password: 'testing',
 		};
@@ -66,17 +66,17 @@ describe('POST /users', () => {
 
 		expect(usersAtEnd.length).toBe(usersAtStart.length + 1);
 
-		const usernames = usersAtEnd.map((u) => u.username);
-		expect(usernames).toContain(newUser.username);
+		const emails = usersAtEnd.map((u) => u.email);
+		expect(emails).toContain(newUser.email);
 	});
 
-	it('creation fails with proper statuscode and message if username already taken', async () => {
+	it('creation fails with proper statuscode and message if email already taken', async () => {
 		const usersAtStart = await User.find({}).then((users) =>
 			users.map((user) => user.toJSON())
 		);
 
 		const newUser = {
-			username: 'root',
+			email: 'root@gmail.com',
 			name: 'Superuser',
 			password: 'salainen',
 		};
@@ -88,7 +88,7 @@ describe('POST /users', () => {
 			.expect('Content-Type', /application\/json/);
 
 		expect(response.status).toBe(400);
-		expect(response.body).toEqual({ error: 'Expected "username" to be unique' });
+		expect(response.body).toEqual({ error: 'Expected "email" to be unique' });
 
 		const usersAtEnd = await User.find({}).then((users) =>
 			users.map((user) => user.toJSON())
@@ -101,13 +101,13 @@ describe('POST /users', () => {
 		it('delete request works', async () => {
 			interface UserResponse {
 				id: string;
-				username: string;
+				email: string;
 				name: string;
 				todos: string[];
 			}
 
 			const newUser = {
-				username: 'itsanna1',
+				email: 'itsanna1@gmail.com',
 				name: 'Testing User Delete',
 				password: 'testing',
 			};
@@ -117,6 +117,7 @@ describe('POST /users', () => {
 			const deleteUserId = (deleteResponse.body as UserResponse).id.toString();
 
 			const response = await api.delete(`/todos/${deleteUserId}`);
+			console.log(response);
 			expect(response.status).toBe(204);
 			expect(response.body).toEqual({});
 		});

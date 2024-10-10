@@ -5,8 +5,8 @@ POST http://localhost:3001/users
 Content-Type: application/json
 
 {
-    "username": "itsrev",
-    "name": "rev",
+    "email": "kharina@gmail.com",
+    "name": "test",
     "password": "testing"
 }
 
@@ -15,7 +15,7 @@ POST http://localhost:3001/users
 Content-Type: application/json
 
 {
-    "username": "to delete",
+    "email": "to delete",
     "name": "Deleting!",
     "password": "delete"
 }

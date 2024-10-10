@@ -5,7 +5,7 @@ const IntroSection = () => {
 	return (
 		<>
 			<div className='left-side'>
-				<img src={todoVector} alt='a running man' />
+				<img src={todoVector} className='todo-vector' alt='todo' />
 			</div>
 		</>
 	);

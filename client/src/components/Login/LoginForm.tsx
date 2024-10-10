@@ -1,10 +1,17 @@
 import '../../styles/LoginForm.scss';
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import userService from '../../services/user.js';
 
 const Form = () => {
-	const [formData, setFormData] = React.useState({ username: '', password: '' });
+	const [formData, setFormData] = React.useState({ email: '', password: '' });
+	const [errorMessage, setError] = React.useState('');
+	const navigate = useNavigate();
 
-	// console.log(formData)
+	useEffect(() => {
+		// Remove any existing tokens
+		localStorage.removeItem('token');
+	}, []);
 
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		setFormData((prevFormData) => {
@@ -15,10 +22,24 @@ const Form = () => {
 		});
 	};
 
-	const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+	const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
-		// submitToApi(formData)
-		console.log(formData);
+		console.log('Form data:', formData); // Add this line
+
+		try {
+			const response = await userService.loginUser(formData);
+			console.log('Response from backend:', response); // Add this line
+
+			if (response.token) {
+				localStorage.setItem('token', response.token);
+				navigate('/upcoming');
+			} else {
+				setError('Invalid credentials');
+			}
+		} catch (error) {
+			console.error('Error in handleSubmit:', error); // Add this line
+			setError('Login failed. Please try again.');
+		}
 	};
 
 	return (
@@ -28,25 +49,23 @@ const Form = () => {
 					<h2 className='login-form-title'>Login</h2>
 					<p className='welcome-back'>Nice to see you!</p>
 				</div>
-
 				<div className='login-form-item'>
-					<label htmlFor='login-username'>Username</label>
+					<label htmlFor='login-email'>Email</label>
 					<input
 						className='login-input'
 						type='text'
-						id='login-username'
-						placeholder='Enter your username'
+						id='login-email'
+						placeholder='Enter your email'
 						onChange={handleChange}
-						name='username'
-						value={formData.username}
+						name='email'
+						value={formData.email}
 					/>
 				</div>
-
 				<div className='login-form-item'>
 					<label htmlFor='login-password'>Password</label>
 					<input
 						className='login-input'
-						type='text'
+						type='password'
 						id='login-password'
 						placeholder='Enter your password'
 						onChange={handleChange}
@@ -54,6 +73,7 @@ const Form = () => {
 						value={formData.password}
 					/>
 				</div>
+				{errorMessage && <p className='error-message'>{errorMessage}</p>}
 				<button className='login-button'>Log in</button>
 			</form>
 			<p className='sign-up-option'>
@@ -64,6 +84,6 @@ const Form = () => {
 };
 
 // Add link to sign up page
-// Add error message if the username and password aren't registered
+// Add error message if the email and password aren't registered
 
 export default Form;

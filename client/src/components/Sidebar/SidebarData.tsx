@@ -22,7 +22,7 @@ export const SidebarData: SidebarCategory[] = [
 		items: [
 			{
 				title: 'Upcoming',
-				path: '/',
+				path: '/upcoming',
 				icon: <FaIcons.FaInbox />,
 				cName: 'nav-text',
 				id: 'main-tasks',

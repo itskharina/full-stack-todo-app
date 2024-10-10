@@ -12,7 +12,7 @@ let authToken: string;
 
 interface UserResponse {
 	id: string;
-	username: string;
+	email: string;
 	name: string;
 	todos: string[];
 }
@@ -21,7 +21,7 @@ beforeEach(async () => {
 	await User.deleteMany({});
 
 	const newUser = {
-		username: `${Date.now() + Math.random()}`,
+		email: `${Date.now() + Math.random()}@gmail.com`,
 		name: 'hi',
 		password: 'salainen',
 	};

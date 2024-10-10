@@ -5,7 +5,7 @@ const SignupForm = () => {
 	const [formData, setFormData] = React.useState({
 		firstName: '',
 		lastName: '',
-		username: '',
+		email: '',
 		password: '',
 		confirmPassword: '',
 	});
@@ -62,15 +62,15 @@ const SignupForm = () => {
 				</div>
 
 				<div className='signup-form-item'>
-					<label htmlFor='signup-username'>Username</label>
+					<label htmlFor='signup-email'>Email</label>
 					<input
 						className='signup-input'
 						type='text'
-						id='signup-username'
-						placeholder='Enter a username'
+						id='signup-email'
+						placeholder='Enter your email'
 						onChange={handleChange}
-						name='username'
-						value={formData.username}
+						name='email'
+						value={formData.email}
 					/>
 				</div>
 

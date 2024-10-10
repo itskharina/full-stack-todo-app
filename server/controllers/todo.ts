@@ -22,7 +22,7 @@ interface TodoRequestBody {
 
 interface DecodedToken {
 	id: string;
-	username: string;
+	email: string;
 }
 
 const getTokenFrom = (req: Request) => {
@@ -36,7 +36,7 @@ const getTokenFrom = (req: Request) => {
 const getTodos = async (_req: Request, res: Response): Promise<Response | void> => {
 	try {
 		const todos = await Todo.find({})
-			.populate('user', { username: 1, name: 1 })
+			.populate('user', { email: 1, name: 1 })
 			.populate('project', { name: 1 });
 		res.json(todos);
 	} catch (error) {

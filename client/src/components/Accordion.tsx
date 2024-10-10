@@ -20,9 +20,6 @@ import orangeFlag from '../assets/orangeflag.png';
 import greenFlag from '../assets/greenflag.png';
 import greyFlag from '../assets/greyflag.png';
 
-// make it so that when you edit the project its on is pre-selected
-// change upcoming to inbox/main
-
 interface TodoItemProps {
 	todo: ITodo;
 	index: number;

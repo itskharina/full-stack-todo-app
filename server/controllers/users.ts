@@ -5,7 +5,7 @@ import bcrypt from 'bcrypt';
 
 interface UserRequestBody {
 	id: string;
-	username: string;
+	email: string;
 	name: string;
 	password: string;
 }
@@ -17,20 +17,21 @@ const createUser = async (
 ): Promise<Response | void> => {
 	const body = req.body as UserRequestBody;
 
-	if (!body.username || !body.name || !body.password) {
-		return res.status(400).json({ error: 'Username, name, and password are required' });
+	if (!body.email || !body.name || !body.password) {
+		return res.status(400).json({ error: 'Email, name, and password are required' });
 	}
 
 	const saltRounds = 10;
 	const passwordHash = await bcrypt.hash(body.password, saltRounds);
 
 	const user = new User({
-		username: body.username,
+		email: body.email,
 		name: body.name,
 		passwordHash,
 	});
 
 	try {
+		console.log(user);
 		const savedUser = await user.save();
 		res.status(201).json(savedUser);
 	} catch (error) {
