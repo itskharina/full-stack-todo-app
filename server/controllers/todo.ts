@@ -33,14 +33,30 @@ const getTokenFrom = (req: Request) => {
 	return null;
 };
 
-const getTodos = async (_req: Request, res: Response): Promise<Response | void> => {
+const getTodos = async (req: Request, res: Response): Promise<Response | void> => {
 	try {
-		const todos = await Todo.find({})
-			.populate('user', { email: 1, name: 1 })
+		const token = getTokenFrom(req);
+		if (!token) {
+			return res.status(401).json({ error: 'No token provided' });
+		}
+
+		const decodedToken = jwt.verify(token, SECRET) as DecodedToken;
+		if (!decodedToken.id) {
+			return res.status(401).json({ error: 'Token invalid' });
+		}
+
+		const todos = await Todo.find({ user: decodedToken.id })
+			.populate('user', { email: 1, first_name: 1, last_name: 1 })
 			.populate('project', { name: 1 });
 		res.json(todos);
 	} catch (error) {
-		return res.status(500).json({ error: 'Error getting tasks' });
+		if (error instanceof Error) {
+			if (error.name === 'JsonWebTokenError') {
+				return res.status(401).json({ error: 'Token invalid' });
+			} else {
+				return res.status(500).json({ error: 'Error getting tasks' });
+			}
+		}
 	}
 };
 

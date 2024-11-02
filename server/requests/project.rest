@@ -1,8 +1,11 @@
 GET http://localhost:3001/projects
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRlc3RAZ21haWwuY29tIiwiaWQiOiI2NzI2NmM1ZDJmNWZmNGZjYTc0NjQ2NjQiLCJpYXQiOjE3MzA1NzU0MjZ9.gIdBroWOm3BjsSx6pJAWGXqmf8TLDkeRgfSZdwaCvUY
+
 
 ###
 
 GET http://localhost:3001/projects/school
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRlc3RAZ21haWwuY29tIiwiaWQiOiI2NzI2NmM1ZDJmNWZmNGZjYTc0NjQ2NjQiLCJpYXQiOjE3MzA1NzU0MjZ9.gIdBroWOm3BjsSx6pJAWGXqmf8TLDkeRgfSZdwaCvUY
 
 ###
 
@@ -17,6 +20,8 @@ Content-Type: application/json
 
 POST http://localhost:3001/projects
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRlc3RAZ21haWwuY29tIiwiaWQiOiI2NzI2NmM1ZDJmNWZmNGZjYTc0NjQ2NjQiLCJpYXQiOjE3MzA1NzU0MjZ9.gIdBroWOm3BjsSx6pJAWGXqmf8TLDkeRgfSZdwaCvUY
+
 
 {		
 		"name": "Test"

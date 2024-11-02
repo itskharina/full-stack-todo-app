@@ -9,6 +9,7 @@ import greenFlag from '../assets/greenflag.png';
 import greyFlag from '../assets/greyflag.png';
 import { ITodo } from '../store/todoSlice.js';
 import TodoList from '../components/Accordion.js';
+import tokenService from '../services/token.js';
 
 const Project = () => {
 	const { sidebar } = useSidebar();
@@ -20,6 +21,14 @@ const Project = () => {
 		name: string;
 		todos: ITodo[];
 	} | null>(null);
+
+	useEffect(() => {
+		const loggedUserJSON = window.localStorage.getItem('loggedTodoappUser');
+		if (loggedUserJSON) {
+			const user = JSON.parse(loggedUserJSON);
+			tokenService.setToken(user.token);
+		}
+	}, []);
 
 	useEffect(() => {
 		const fetchProject = async () => {

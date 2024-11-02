@@ -6,7 +6,8 @@ import bcrypt from 'bcrypt';
 interface UserRequestBody {
 	id: string;
 	email: string;
-	name: string;
+	first_name: string;
+	last_name: string;
 	password: string;
 }
 
@@ -17,7 +18,7 @@ const createUser = async (
 ): Promise<Response | void> => {
 	const body = req.body as UserRequestBody;
 
-	if (!body.email || !body.name || !body.password) {
+	if (!body.email || !body.first_name || !body.last_name || !body.password) {
 		return res.status(400).json({ error: 'Email, name, and password are required' });
 	}
 
@@ -26,7 +27,8 @@ const createUser = async (
 
 	const user = new User({
 		email: body.email,
-		name: body.name,
+		first_name: body.first_name,
+		last_name: body.last_name,
 		passwordHash,
 	});
 

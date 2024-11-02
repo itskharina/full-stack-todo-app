@@ -24,7 +24,10 @@ const todoSlice = createSlice({
 		setTodos(_state, action: PayloadAction<ITodo[]>) {
 			return action.payload;
 		},
+		clearTodos: () => {
+			return initialState;
+		},
 	},
 });
-export const { setTodos } = todoSlice.actions;
+export const { setTodos, clearTodos } = todoSlice.actions;
 export default todoSlice.reducer;

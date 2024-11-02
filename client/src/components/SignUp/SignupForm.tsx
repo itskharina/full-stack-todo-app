@@ -1,5 +1,8 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import '../../styles/SignupForm.scss';
+import userService from '../../services/user.js';
+import loginService from '../../services/login.js';
 
 const SignupForm = () => {
 	const [formData, setFormData] = React.useState({
@@ -9,8 +12,12 @@ const SignupForm = () => {
 		password: '',
 		confirmPassword: '',
 	});
+	const [errorMessage, setError] = React.useState('');
+	const navigate = useNavigate();
 
-	// console.log(formData)
+	const isValidEmail = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+	const isPasswordStrong = (password: string) =>
+		password.length >= 5 && /\d/.test(password) && /[A-Z]/.test(password);
 
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		setFormData((prevFormData) => {
@@ -21,10 +28,66 @@ const SignupForm = () => {
 		});
 	};
 
-	const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+	const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
-		// submitToApi(formData)
-		console.log(formData);
+		console.log('Form data:', formData);
+
+		// Basic form validation
+		if (
+			!formData.firstName ||
+			!formData.lastName ||
+			!formData.email ||
+			!formData.password
+		) {
+			setError('All fields are required.');
+			return;
+		}
+
+		if (!isValidEmail(formData.email)) {
+			setError('Please enter a valid email address.');
+			return;
+		}
+
+		if (!isPasswordStrong(formData.password)) {
+			setError(
+				'Password must be at least 5 characters long, contain a number, and an uppercase letter.'
+			);
+			return;
+		}
+
+		if (formData.password !== formData.confirmPassword) {
+			setError('Passwords do not match.');
+			return;
+		}
+
+		// Map formData to match INewUser interface
+		const userPayload = {
+			first_name: formData.firstName,
+			last_name: formData.lastName,
+			email: formData.email,
+			password: formData.password,
+		};
+
+		try {
+			await userService.createUser(userPayload);
+			// console.log('Response from backend:', response);
+
+			const loginPayload = {
+				email: userPayload.email,
+				password: userPayload.password,
+			};
+
+			const response = await loginService.loginUser(loginPayload);
+			if (response.token) {
+				localStorage.setItem('token', response.token);
+				navigate('/upcoming');
+			} else {
+				setError('Redirection failed, please try again.');
+			}
+		} catch (error) {
+			console.error('Error in handleSubmit:', error);
+			setError('Creation failed. Please try again.');
+		}
 	};
 
 	return (
@@ -99,7 +162,7 @@ const SignupForm = () => {
 						value={formData.confirmPassword}
 					/>
 				</div>
-
+				{errorMessage && <p className='error-message'>{errorMessage}</p>}
 				<button className='signup-button'>Sign up</button>
 			</form>
 		</div>

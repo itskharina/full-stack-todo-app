@@ -1,3 +1,5 @@
+import tokenService from '../services/token.js';
+
 interface ITodo {
 	id: string;
 	title: string;
@@ -9,9 +11,16 @@ interface ITodo {
 
 const baseUrl = 'http://localhost:3001/todos';
 
+const getAuthHeaders = () => ({
+	'Content-type': 'application/json; charset=UTF-8',
+	Authorization: tokenService.getToken() || '',
+});
+
 const getTodos = async () => {
 	try {
-		const response = await fetch(baseUrl);
+		const response = await fetch(baseUrl, {
+			headers: getAuthHeaders(),
+		});
 		if (!response.ok) {
 			throw new Error(`HTTP error! status: ${response.status}`);
 		}
@@ -28,9 +37,7 @@ const createTodo = async (newObject: ITodo) => {
 			method: 'POST',
 
 			body: JSON.stringify(newObject),
-			headers: {
-				'Content-type': 'application/json; charset=UTF-8',
-			},
+			headers: getAuthHeaders(),
 		});
 		if (!response.ok) {
 			throw new Error(`HTTP error! status: ${response.status}`);
@@ -46,15 +53,13 @@ const updateTodo = async (newObject: ITodo) => {
 	try {
 		const url = `${baseUrl}/${newObject.id}`;
 
-		console.log('Sending update payload:', JSON.stringify(newObject));
+		// console.log('Sending update payload:', JSON.stringify(newObject));
 
 		const response = await fetch(url, {
 			method: 'PUT',
 
 			body: JSON.stringify(newObject),
-			headers: {
-				'Content-type': 'application/json; charset=UTF-8',
-			},
+			headers: getAuthHeaders(),
 		});
 		if (!response.ok) {
 			throw new Error(`HTTP error! status: ${response.status}`);
@@ -69,6 +74,7 @@ const updateTodo = async (newObject: ITodo) => {
 const deleteTodo = (id: string) => {
 	const request = fetch(`${baseUrl}/${id}`, {
 		method: 'DELETE',
+		headers: getAuthHeaders(),
 	});
 
 	return request;

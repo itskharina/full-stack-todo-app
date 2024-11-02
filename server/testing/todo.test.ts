@@ -13,7 +13,8 @@ let authToken: string;
 interface UserResponse {
 	id: string;
 	email: string;
-	name: string;
+	first_name: string;
+	last_name: string;
 	todos: string[];
 }
 
@@ -22,8 +23,9 @@ beforeEach(async () => {
 
 	const newUser = {
 		email: `${Date.now() + Math.random()}@gmail.com`,
-		name: 'hi',
-		password: 'salainen',
+		first_name: 'hi',
+		last_name: 'hello',
+		password: 'Testing1',
 	};
 
 	await new Promise((resolve) => setTimeout(resolve, 2000));
@@ -40,7 +42,10 @@ beforeEach(async () => {
 
 describe('GET /todos', () => {
 	it('notes are returned as json', async () => {
-		const response = await api.get('/todos');
+		const response = await api
+			.get('/todos')
+			.set('Content-Type', 'application/json')
+			.set('Authorization', `Bearer ${authToken}`);
 		expect(response.status).toBe(200);
 		expect(response.headers['content-type']).toMatch(/application\/json/);
 	});
@@ -50,7 +55,10 @@ describe('GET /todos', () => {
 			throw new Error('Database error');
 		});
 
-		const response = await api.get('/todos');
+		const response = await api
+			.get('/todos')
+			.set('Content-Type', 'application/json')
+			.set('Authorization', `Bearer ${authToken}`);
 		expect(response.status).toBe(500);
 		expect(response.body).toEqual({ error: 'Error getting tasks' });
 

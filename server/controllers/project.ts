@@ -1,17 +1,54 @@
 import Project from '../models/project.js';
 import { Request, Response, NextFunction } from 'express';
 import Todo from '../models/todo.js';
+import jwt from 'jsonwebtoken';
+
+const SECRET = process.env.SECRET;
+
+if (!SECRET) {
+	throw new Error('No SECRET environment variable is set');
+}
 
 interface ProjectRequestBody {
 	name: string;
 }
 
-const getProjects = async (_req: Request, res: Response): Promise<Response | void> => {
+interface DecodedToken {
+	id: string;
+	email: string;
+}
+
+const getTokenFrom = (req: Request) => {
+	const authorization = req.get('authorization');
+	if (authorization && authorization.startsWith('Bearer ')) {
+		return authorization.replace('Bearer ', '');
+	}
+	return null;
+};
+
+const getProjects = async (req: Request, res: Response): Promise<Response | void> => {
 	try {
-		const projects = await Project.find({});
+		const token = getTokenFrom(req);
+		if (!token) {
+			return res.status(401).json({ error: 'No token provided' });
+		}
+
+		const decodedToken = jwt.verify(token, SECRET) as DecodedToken;
+		console.log('decodedToken', decodedToken);
+		if (!decodedToken.id) {
+			return res.status(401).json({ error: 'Token invalid' });
+		}
+
+		const projects = await Project.find({ user: decodedToken.id });
+		console.log(projects);
 		res.json(projects);
 	} catch (error) {
-		return res.status(500).json({ error: 'Error getting projects' });
+		if (error instanceof Error) {
+			if (error.name === 'JsonWebTokenError') {
+				return res.status(401).json({ error: 'Token invalid' });
+			}
+			return res.status(500).json({ error: 'Error getting projects' });
+		}
 	}
 };
 
@@ -48,6 +85,16 @@ const getProjectById = async (req: Request, res: Response): Promise<Response | v
 
 const createProject = async (req: Request, res: Response): Promise<Response | void> => {
 	try {
+		const token = getTokenFrom(req);
+		if (!token) {
+			return res.status(401).json({ error: 'No token provided' });
+		}
+
+		const decodedToken = jwt.verify(token, SECRET) as DecodedToken;
+		if (!decodedToken.id) {
+			return res.status(401).json({ error: 'Token invalid' });
+		}
+
 		const body = req.body as ProjectRequestBody;
 
 		if (!body.name) {
@@ -58,6 +105,7 @@ const createProject = async (req: Request, res: Response): Promise<Response | vo
 
 		const project = new Project({
 			name: body.name,
+			user: decodedToken.id,
 		});
 
 		console.log('About to save project:', project);

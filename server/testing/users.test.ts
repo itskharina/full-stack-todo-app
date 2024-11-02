@@ -33,7 +33,7 @@ describe('POST /users', () => {
 		await User.deleteMany({});
 		await Todo.deleteMany({});
 
-		const passwordHash = await bcrypt.hash('sekret', 10);
+		const passwordHash = await bcrypt.hash('Secret1', 10);
 		const user = new User({ email: 'root@gmail.com', passwordHash });
 
 		// await new Promise((resolve) => setTimeout(resolve, 2000));
@@ -50,8 +50,9 @@ describe('POST /users', () => {
 
 		const newUser = {
 			email: 'itsanna@gmail.com',
-			name: 'Testing User Creation',
-			password: 'testing',
+			first_name: 'Testing User',
+			last_name: 'Creation',
+			password: 'Testing1',
 		};
 
 		await api
@@ -77,8 +78,9 @@ describe('POST /users', () => {
 
 		const newUser = {
 			email: 'root@gmail.com',
-			name: 'Superuser',
-			password: 'salainen',
+			first_name: 'Superuser',
+			last_name: 'User',
+			password: 'Testing1',
 		};
 
 		const response = await api
@@ -97,30 +99,54 @@ describe('POST /users', () => {
 		expect(usersAtEnd.length).toEqual(usersAtStart.length);
 	});
 
-	describe('DELETE /users', () => {
-		it('delete request works', async () => {
-			interface UserResponse {
-				id: string;
-				email: string;
-				name: string;
-				todos: string[];
-			}
+	it("creation fails if passwords don't match", async () => {
+		const newUser = {
+			email: 'root@gmail.com',
+			first_name: 'Superuser',
+			last_name: 'User',
+			password: 'Testing1',
+		};
 
-			const newUser = {
-				email: 'itsanna1@gmail.com',
-				name: 'Testing User Delete',
-				password: 'testing',
-			};
+		const response = await api
+			.post('/users')
+			.send(newUser)
+			.expect(400)
+			.expect('Content-Type', /application\/json/);
 
-			const deleteResponse = await api.post('/users').send(newUser).expect(201);
+		expect(response.status).toBe(400);
+		expect(response.body).toEqual({ error: 'Expected "email" to be unique' });
 
-			const deleteUserId = (deleteResponse.body as UserResponse).id.toString();
+		const usersAtEnd = await User.find({}).then((users) =>
+			users.map((user) => user.toJSON())
+		);
+	});
+});
 
-			const response = await api.delete(`/todos/${deleteUserId}`);
-			console.log(response);
-			expect(response.status).toBe(204);
-			expect(response.body).toEqual({});
-		});
+describe('DELETE /users', () => {
+	it('delete request works', async () => {
+		interface UserResponse {
+			id: string;
+			email: string;
+			first_name: string;
+			last_name: string;
+			todos: string[];
+		}
+
+		const newUser = {
+			email: 'itsanna1@gmail.com',
+			first_name: 'Testing User',
+			last_name: 'Delete',
+			password: 'Testing1',
+		};
+
+		const deleteResponse = await api.post('/users').send(newUser).expect(201);
+
+		const deleteUserId = (deleteResponse.body as UserResponse).id.toString();
+
+		const response = await api.delete(`/todos/${deleteUserId}`);
+		console.log(response);
+		expect(response.status).toBe(204);
+		expect(response.body).toEqual({});
 	});
 });
 

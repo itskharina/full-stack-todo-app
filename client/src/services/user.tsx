@@ -1,28 +1,44 @@
-interface IUser {
+import tokenService from '../services/token.js';
+
+interface INewUser {
 	email: string;
+	first_name: string;
+	last_name: string;
 	password: string;
 }
 
-const baseUrl = 'http://localhost:3001/login';
+const baseUrl = 'http://localhost:3001/users';
 
-const loginUser = async (newObject: IUser) => {
+const getAuthHeaders = () => ({
+	'Content-type': 'application/json; charset=UTF-8',
+	Authorization: tokenService.getToken() || '',
+});
+
+const createUser = async (newObject: INewUser) => {
 	try {
 		const response = await fetch(baseUrl, {
 			method: 'POST',
 
 			body: JSON.stringify(newObject),
-			headers: {
-				'Content-type': 'application/json; charset=UTF-8',
-			},
+			headers: getAuthHeaders(),
 		});
 		if (!response.ok) {
 			throw new Error(`HTTP error! status: ${response.status}`);
 		}
 		return await response.json();
 	} catch (error) {
-		console.error('Error logging in:', error);
+		console.error('Error creating user:', error);
 		throw error;
 	}
 };
 
-export default { loginUser };
+const deleteUser = (id: string) => {
+	const request = fetch(`${baseUrl}/${id}`, {
+		method: 'DELETE',
+		headers: getAuthHeaders(),
+	});
+
+	return request;
+};
+
+export default { createUser, deleteUser };

@@ -3,18 +3,20 @@ import mongoose, { Document, Schema } from 'mongoose';
 interface IUser {
 	id: string;
 	email: string;
-	name: string;
+	first_name: string;
+	last_name: string;
 	passwordHash: string;
 	todos: mongoose.Types.ObjectId[];
 }
 
-const userSchema = new Schema<IUser>({
+const userSchema: Schema = new Schema<IUser>({
 	email: {
 		type: String,
 		required: true,
 		unique: true,
 	},
-	name: String,
+	first_name: String,
+	last_name: String,
 	passwordHash: String,
 	todos: [
 		{

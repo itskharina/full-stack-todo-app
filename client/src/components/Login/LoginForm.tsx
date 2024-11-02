@@ -1,17 +1,17 @@
 import '../../styles/LoginForm.scss';
-import React, { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import userService from '../../services/user.js';
+import React from 'react';
+import tokenService from '../../services/token.js';
+import { useAppDispatch } from '../../hooks.js';
+import { clearTodos } from '../../store/todoSlice.js';
+
+import { useNavigate, Link } from 'react-router-dom';
+import loginService from '../../services/login.js';
 
 const Form = () => {
 	const [formData, setFormData] = React.useState({ email: '', password: '' });
 	const [errorMessage, setError] = React.useState('');
 	const navigate = useNavigate();
-
-	useEffect(() => {
-		// Remove any existing tokens
-		localStorage.removeItem('token');
-	}, []);
+	const dispatch = useAppDispatch();
 
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		setFormData((prevFormData) => {
@@ -24,20 +24,30 @@ const Form = () => {
 
 	const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
-		console.log('Form data:', formData); // Add this line
+		console.log('Form data:', formData);
+
+		// Basic form validation
+		if (!formData.email || !formData.password) {
+			setError('All fields are required.');
+			return;
+		}
 
 		try {
-			const response = await userService.loginUser(formData);
-			console.log('Response from backend:', response); // Add this line
+			dispatch(clearTodos());
+
+			const response = await loginService.loginUser(formData);
+			console.log('Response from backend:', response);
 
 			if (response.token) {
-				localStorage.setItem('token', response.token);
+				window.localStorage.setItem('loggedTodoappUser', JSON.stringify(response));
+				tokenService.setToken(response.token);
+				console.log('Token after login:', tokenService.getToken());
 				navigate('/upcoming');
 			} else {
 				setError('Invalid credentials');
 			}
 		} catch (error) {
-			console.error('Error in handleSubmit:', error); // Add this line
+			console.error('Error in handleSubmit:', error);
 			setError('Login failed. Please try again.');
 		}
 	};
@@ -77,7 +87,7 @@ const Form = () => {
 				<button className='login-button'>Log in</button>
 			</form>
 			<p className='sign-up-option'>
-				Don't have an account? <a href='#'>Sign up</a>
+				Don't have an account? <Link to='/signup'>Sign up</Link>
 			</p>
 		</div>
 	);

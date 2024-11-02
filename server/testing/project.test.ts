@@ -1,14 +1,50 @@
-import { describe, it, afterAll, expect, vi } from 'vitest';
+import { describe, it, afterAll, expect, vi, beforeEach } from 'vitest';
 import request from 'supertest';
 import app from '../server.js';
 import mongoose from 'mongoose';
 import Project from '../models/project.js';
+import User from '../models/users.js';
 
 const api = request(app);
+let testUserId: string;
+let authToken: string;
+
+interface UserResponse {
+	id: string;
+	email: string;
+	first_name: string;
+	last_name: string;
+	todos: string[];
+}
+
+beforeEach(async () => {
+	await User.deleteMany({});
+
+	const newUser = {
+		email: `${Date.now() + Math.random()}@gmail.com`,
+		first_name: 'hi',
+		last_name: 'hello',
+		password: 'Testing1',
+	};
+
+	await new Promise((resolve) => setTimeout(resolve, 2000));
+
+	const response = await api.post('/users').send(newUser);
+
+	expect(response.status).toBe(201);
+	testUserId = (response.body as UserResponse).id.toString();
+
+	const loginResponse = await api.post('/login').send(newUser);
+
+	authToken = loginResponse.body.token as string;
+});
 
 describe('GET /projects', () => {
 	it('projects are returned as json', async () => {
-		const response = await api.get('/projects');
+		const response = await api
+			.get('/projects')
+			.set('Content-Type', 'application/json')
+			.set('Authorization', `Bearer ${authToken}`);
 		expect(response.status).toBe(200);
 		expect(response.headers['content-type']).toMatch(/application\/json/);
 	});
@@ -18,7 +54,10 @@ describe('GET /projects', () => {
 			throw new Error('Database error');
 		});
 
-		const response = await api.get('/projects');
+		const response = await api
+			.get('/projects')
+			.set('Content-Type', 'application/json')
+			.set('Authorization', `Bearer ${authToken}`);
 		expect(response.status).toBe(500);
 		expect(response.body).toEqual({ error: 'Error getting projects' });
 
@@ -35,13 +74,18 @@ describe('POST /projects', () => {
 		const response = await api
 			.post('/projects')
 			.set('Content-Type', 'application/json')
+			.set('Authorization', `Bearer ${authToken}`)
 			.send(testProject);
 		expect(response.status).toBe(201);
 		expect(response.body.name).toEqual('Testing!');
 	});
 
 	it('should return 400 when the name of the project is missing', async () => {
-		const response = await api.post('/projects').send({});
+		const response = await api
+			.post('/projects')
+			.set('Content-Type', 'application/json')
+			.set('Authorization', `Bearer ${authToken}`)
+			.send({});
 		expect(response.status).toBe(400);
 		expect(response.body).toEqual({ error: 'Name required' });
 	});

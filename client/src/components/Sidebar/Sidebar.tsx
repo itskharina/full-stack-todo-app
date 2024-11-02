@@ -9,6 +9,7 @@ import { useSidebar } from './SidebarProvider.js';
 import projectService from '../../services/project.js';
 import todoService from '../../services/todos.js';
 import { useNavigate } from 'react-router-dom';
+import tokenService from '../../services/token.js';
 
 import { ITodo } from '../../store/todoSlice.js';
 import { IProject } from '../../store/todoSlice.js';
@@ -380,6 +381,14 @@ const Sidebar = () => {
 	const [isCreateTodoModalOpen, setIsCreateTodoModalOpen] = useState(false);
 
 	useEffect(() => {
+		const loggedUserJSON = window.localStorage.getItem('loggedTodoappUser');
+		if (loggedUserJSON) {
+			const user = JSON.parse(loggedUserJSON);
+			tokenService.setToken(user.token);
+		}
+	}, []);
+
+	useEffect(() => {
 		const fetchProjects = async () => {
 			const projects = await projectService.getProjects();
 			const projectsCategory = SidebarData.find(
@@ -398,11 +407,11 @@ const Sidebar = () => {
 						};
 					}),
 				];
-				setSidebarData([...sidebarData]);
+				setSidebarData([...SidebarData]);
 			}
 		};
 		fetchProjects();
-	}, [sidebarData]);
+	}, []);
 
 	return (
 		<>
@@ -434,7 +443,7 @@ const Sidebar = () => {
 								<CgClose color='#524f5f' />
 							</Link>
 						</li>
-						{SidebarData.map((category, categoryIndex) => {
+						{sidebarData.map((category, categoryIndex) => {
 							return (
 								<React.Fragment key={categoryIndex}>
 									<h3 className={category.cName}>{category.title}</h3>

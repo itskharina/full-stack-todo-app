@@ -8,13 +8,30 @@ import redFlag from '../assets/redflag.png';
 import orangeFlag from '../assets/orangeflag.png';
 import greenFlag from '../assets/greenflag.png';
 import greyFlag from '../assets/greyflag.png';
+import tokenService from '../services/token.js';
 
 const Upcoming = () => {
 	const { sidebar } = useSidebar();
 	const dispatch = useAppDispatch();
 
 	useEffect(() => {
-		todoService.getTodos().then((notes) => dispatch(setTodos(notes)));
+		const loggedUserJSON = window.localStorage.getItem('loggedTodoappUser');
+		if (loggedUserJSON) {
+			const user = JSON.parse(loggedUserJSON);
+			tokenService.setToken(user.token);
+		}
+	}, []);
+
+	useEffect(() => {
+		const fetchTodos = async () => {
+			try {
+				const fetchedTodos = await todoService.getTodos();
+				dispatch(setTodos(fetchedTodos));
+			} catch (error) {
+				console.error('Error fetching todos:', error);
+			}
+		};
+		fetchTodos();
 	}, [dispatch]);
 
 	const todos = useAppSelector((state) => state.todo);

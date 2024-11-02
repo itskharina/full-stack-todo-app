@@ -1,6 +1,6 @@
 import LoginForm from '../components/Login/LoginForm';
 import IntroSection from '../components/Login/IntroSection';
-// import './Login.css';
+import '../styles/LoginContainer.scss';
 
 const Login = () => {
 	return (

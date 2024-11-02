@@ -1,9 +1,17 @@
 const baseUrl = 'http://localhost:3001/projects';
 import { IProject } from '../store/todoSlice';
+import tokenService from '../services/token.js';
+
+const getAuthHeaders = () => ({
+	'Content-type': 'application/json; charset=UTF-8',
+	Authorization: tokenService.getToken() || '',
+});
 
 const getProjects = async () => {
 	try {
-		const response = await fetch(baseUrl);
+		const response = await fetch(baseUrl, {
+			headers: getAuthHeaders(),
+		});
 		if (!response.ok) {
 			throw new Error(`HTTP error! status: ${response.status}`);
 		}
@@ -16,7 +24,9 @@ const getProjects = async () => {
 
 const getProjectByName = async (projectName: string) => {
 	try {
-		const response = await fetch(`${baseUrl}/${projectName}`);
+		const response = await fetch(`${baseUrl}/${projectName}`, {
+			headers: getAuthHeaders(),
+		});
 		if (!response.ok) {
 			throw new Error(`HTTP error! status: ${response.status}`);
 		}
@@ -29,7 +39,9 @@ const getProjectByName = async (projectName: string) => {
 
 const getProjectById = async (projectId: string) => {
 	try {
-		const response = await fetch(`${baseUrl}/${projectId}`);
+		const response = await fetch(`${baseUrl}/${projectId}`, {
+			headers: getAuthHeaders(),
+		});
 		if (!response.ok) {
 			throw new Error(`HTTP error! status: ${response.status}`);
 		}
@@ -46,9 +58,7 @@ const createProject = async (newObject: IProject) => {
 			method: 'POST',
 
 			body: JSON.stringify(newObject),
-			headers: {
-				'Content-type': 'application/json; charset=UTF-8',
-			},
+			headers: getAuthHeaders(),
 		});
 		if (!response.ok) {
 			throw new Error(`HTTP error! status: ${response.status}`);
@@ -63,6 +73,7 @@ const createProject = async (newObject: IProject) => {
 const deleteProject = (id: string) => {
 	const request = fetch(`${baseUrl}/${id}`, {
 		method: 'DELETE',
+		headers: getAuthHeaders(),
 	});
 
 	return request;

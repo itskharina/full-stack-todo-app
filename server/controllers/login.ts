@@ -37,7 +37,14 @@ const createLogin = async (req: Request, res: Response): Promise<Response | void
 
 	const token = jwt.sign(userForToken, SECRET);
 
-	res.status(200).send({ token, email: user.email, name: user.name });
+	res
+		.status(200)
+		.send({
+			token,
+			email: user.email,
+			first_name: user.first_name,
+			last_name: user.last_name,
+		});
 };
 
 export default {
