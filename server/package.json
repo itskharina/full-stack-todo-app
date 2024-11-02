@@ -5,7 +5,7 @@
 	"description": "",
 	"main": "server.ts",
 	"scripts": {
-		"test": "cross-env NODE_ENV=test vitest",
+		"test": "cross-env NODE_ENV=test vitest --threads false",
 		"start": "node build/server.ts",
 		"tsc": "tsc",
 		"dev": "tsx watch server.ts",

@@ -75,7 +75,7 @@ describe('POST /projects', () => {
 		expect(response.body.name).toEqual('Testing!');
 	});
 
-	it.only('should return 400 when the name of the project is missing', async () => {
+	it('should return 400 when the name of the project is missing', async () => {
 		const response = await api
 			.post('/projects')
 			.set('Content-Type', 'application/json')
