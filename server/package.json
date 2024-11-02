@@ -5,7 +5,7 @@
 	"description": "",
 	"main": "server.ts",
 	"scripts": {
-		"test": "cross-env NODE_ENV=test vitest --threads false",
+		"test": "cross-env NODE_ENV=test vitest --pool=forks --poolOptions.threads=1",
 		"start": "node build/server.ts",
 		"tsc": "tsc",
 		"dev": "tsx watch server.ts",
