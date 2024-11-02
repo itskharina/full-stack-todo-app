@@ -36,12 +36,10 @@ const Form = () => {
 			dispatch(clearTodos());
 
 			const response = await loginService.loginUser(formData);
-			console.log('Response from backend:', response);
 
 			if (response.token) {
 				window.localStorage.setItem('loggedTodoappUser', JSON.stringify(response));
 				tokenService.setToken(response.token);
-				console.log('Token after login:', tokenService.getToken());
 				navigate('/upcoming');
 			} else {
 				setError('Invalid credentials');

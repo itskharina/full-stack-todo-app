@@ -33,10 +33,10 @@ describe('POST /users', () => {
 		await User.deleteMany({});
 		await Todo.deleteMany({});
 
-		await new Promise((resolve) => setTimeout(resolve, 2000));
-
 		const passwordHash = await bcrypt.hash('Secret1', 10);
 		const user = new User({ email: 'root@gmail.com', passwordHash });
+
+		// await new Promise((resolve) => setTimeout(resolve, 2000));
 
 		await user.save();
 	});
@@ -45,8 +45,6 @@ describe('POST /users', () => {
 		const usersAtStart = await User.find({}).then((users) =>
 			users.map((user) => user.toJSON())
 		);
-
-		console.log('start', usersAtStart);
 
 		const newUser = {
 			email: 'itsanna@gmail.com',
@@ -140,7 +138,6 @@ describe('DELETE /users', () => {
 		const deleteUserId = (deleteResponse.body as UserResponse).id.toString();
 
 		const response = await api.delete(`/todos/${deleteUserId}`);
-		console.log(response);
 		expect(response.status).toBe(204);
 		expect(response.body).toEqual({});
 	});
@@ -148,6 +145,7 @@ describe('DELETE /users', () => {
 
 afterAll(async () => {
 	await User.deleteMany({});
+	await Todo.deleteMany({});
 	await mongoose.connection.close();
 	console.log('Server closed');
 });

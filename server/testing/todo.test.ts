@@ -221,8 +221,6 @@ describe('/PUT todos/id', () => {
 	});
 
 	it('put request works', async () => {
-		console.log('testTodoId', testTodoId);
-		console.log(updateTodo);
 		const response = await api.put(`/todos/${testTodoId}`).send(updateTodo);
 		expect(response.status).toBe(200);
 		expect(response.body.title).toEqual('Updating!');
@@ -254,6 +252,8 @@ describe('/PUT todos/id', () => {
 
 afterAll(async () => {
 	await User.deleteMany({});
+	await Todo.deleteMany({});
+
 	await mongoose.connection.close();
 	console.log('Server closed');
 });

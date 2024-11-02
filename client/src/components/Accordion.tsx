@@ -278,8 +278,6 @@ const MyEditTodoModal = (props: ModalProps & { todo: ITodo }) => {
 			: undefined,
 	});
 
-	console.log(formData);
-
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const { name, value, type, checked } = e.target;
 		setFormData((prevFormData) => {
@@ -328,9 +326,6 @@ const MyEditTodoModal = (props: ModalProps & { todo: ITodo }) => {
 			e.stopPropagation();
 			return;
 		}
-
-		console.log('formData before submit', formData);
-		console.log('Submitting project ID:', formData.project);
 
 		const payload = { ...formData, project: formData.project };
 		await todoService.updateTodo(payload);

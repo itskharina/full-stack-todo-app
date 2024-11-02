@@ -70,7 +70,6 @@ const SignupForm = () => {
 
 		try {
 			await userService.createUser(userPayload);
-			// console.log('Response from backend:', response);
 
 			const loginPayload = {
 				email: userPayload.email,

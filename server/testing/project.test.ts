@@ -10,6 +10,7 @@ let authToken: string;
 
 beforeEach(async () => {
 	await User.deleteMany({});
+	await Project.deleteMany({});
 
 	const newUser = {
 		email: `${Date.now() + Math.random()}@gmail.com`,
@@ -82,6 +83,8 @@ describe('POST /projects', () => {
 });
 
 afterAll(async () => {
+	await Project.deleteMany({});
+	await User.deleteMany({});
 	await mongoose.connection.close();
 	console.log('Server closed');
 });
