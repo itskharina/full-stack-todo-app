@@ -33,10 +33,10 @@ describe('POST /users', () => {
 		await User.deleteMany({});
 		await Todo.deleteMany({});
 
+		await new Promise((resolve) => setTimeout(resolve, 2000));
+
 		const passwordHash = await bcrypt.hash('Secret1', 10);
 		const user = new User({ email: 'root@gmail.com', passwordHash });
-
-		// await new Promise((resolve) => setTimeout(resolve, 2000));
 
 		await user.save();
 	});
