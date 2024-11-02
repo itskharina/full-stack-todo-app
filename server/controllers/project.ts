@@ -34,13 +34,11 @@ const getProjects = async (req: Request, res: Response): Promise<Response | void
 		}
 
 		const decodedToken = jwt.verify(token, SECRET) as DecodedToken;
-		console.log('decodedToken', decodedToken);
 		if (!decodedToken.id) {
 			return res.status(401).json({ error: 'Token invalid' });
 		}
 
 		const projects = await Project.find({ user: decodedToken.id });
-		console.log(projects);
 		res.json(projects);
 	} catch (error) {
 		if (error instanceof Error) {
@@ -108,11 +106,7 @@ const createProject = async (req: Request, res: Response): Promise<Response | vo
 			user: decodedToken.id,
 		});
 
-		console.log('About to save project:', project);
-
 		await project.save();
-
-		console.log('About to save project:', project);
 
 		res.status(201).json(project);
 	} catch (error) {

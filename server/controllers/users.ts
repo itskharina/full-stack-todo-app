@@ -33,7 +33,6 @@ const createUser = async (
 	});
 
 	try {
-		console.log(user);
 		const savedUser = await user.save();
 		res.status(201).json(savedUser);
 	} catch (error) {

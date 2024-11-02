@@ -53,8 +53,6 @@ const updateTodo = async (newObject: ITodo) => {
 	try {
 		const url = `${baseUrl}/${newObject.id}`;
 
-		// console.log('Sending update payload:', JSON.stringify(newObject));
-
 		const response = await fetch(url, {
 			method: 'PUT',
 

@@ -1,4 +1,4 @@
-import { describe, it, afterAll, expect, vi, beforeEach, beforeAll } from 'vitest';
+import { describe, it, afterAll, expect, vi, beforeEach } from 'vitest';
 import request from 'supertest';
 import app from '../server.js';
 import mongoose from 'mongoose';
@@ -7,10 +7,6 @@ import User from '../models/users.js';
 
 const api = request(app);
 let authToken: string;
-
-beforeAll(async () => {
-	await mongoose.connect(process.env.TEST_MONGODB_URI as string);
-});
 
 beforeEach(async () => {
 	await User.deleteMany({});
@@ -81,13 +77,14 @@ describe('POST /projects', () => {
 			.set('Content-Type', 'application/json')
 			.set('Authorization', `Bearer ${authToken}`)
 			.send({});
-		// expect(response.status).toBe(400);
+		expect(response.status).toBe(400);
 		expect(response.body).toEqual({ error: 'Name required' });
 	});
 });
 
 afterAll(async () => {
-	await mongoose.connection.dropDatabase();
+	await Project.deleteMany({});
+	await User.deleteMany({});
 	await mongoose.connection.close();
 	console.log('Server closed');
 });

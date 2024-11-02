@@ -188,9 +188,6 @@ const MyCreateTodoModal = (props: ModalProps) => {
 			return;
 		}
 
-		console.log('formData before submit', formData);
-		console.log('Submitting project ID:', formData.project);
-
 		const payload = { ...formData, project: formData.project };
 		await todoService.createTodo(payload);
 		window.location.reload();

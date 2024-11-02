@@ -91,13 +91,9 @@ const createTodo = async (req: Request, res: Response): Promise<Response | void>
 			user: user._id,
 		});
 
-		console.log('About to save todo:', todo);
-
 		await todo.save();
 		user.todos.push(todo._id);
 		await user.save();
-
-		console.log('Saved todo:', todo);
 
 		if (body.project) {
 			const project = await Project.findById(body.project);
@@ -145,8 +141,6 @@ const updateTodo = async (
 ): Promise<Response | void> => {
 	try {
 		const body = req.body as TodoRequestBody;
-
-		console.log('Received update body:', req.body);
 
 		if (!body.todo || !body.title) {
 			return res.status(400).json({ error: 'Content cannot be empty' });
