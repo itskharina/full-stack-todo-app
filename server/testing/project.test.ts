@@ -6,16 +6,7 @@ import Project from '../models/project.js';
 import User from '../models/users.js';
 
 const api = request(app);
-let testUserId: string;
 let authToken: string;
-
-interface UserResponse {
-	id: string;
-	email: string;
-	first_name: string;
-	last_name: string;
-	todos: string[];
-}
 
 beforeEach(async () => {
 	await User.deleteMany({});
@@ -32,7 +23,6 @@ beforeEach(async () => {
 	const response = await api.post('/users').send(newUser);
 
 	expect(response.status).toBe(201);
-	testUserId = (response.body as UserResponse).id.toString();
 
 	const loginResponse = await api.post('/login').send(newUser);
 

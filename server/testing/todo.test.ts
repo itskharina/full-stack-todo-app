@@ -20,6 +20,7 @@ interface UserResponse {
 
 beforeEach(async () => {
 	await User.deleteMany({});
+	await Todo.deleteMany({});
 
 	const newUser = {
 		email: `${Date.now() + Math.random()}@gmail.com`,
@@ -28,7 +29,7 @@ beforeEach(async () => {
 		password: 'Testing1',
 	};
 
-	await new Promise((resolve) => setTimeout(resolve, 2000));
+	await new Promise((resolve) => setTimeout(resolve, 5000)); // Wait for MongoDB connection to be ready
 
 	const response = await api.post('/users').send(newUser);
 

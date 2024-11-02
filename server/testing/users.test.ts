@@ -115,10 +115,6 @@ describe('POST /users', () => {
 
 		expect(response.status).toBe(400);
 		expect(response.body).toEqual({ error: 'Expected "email" to be unique' });
-
-		const usersAtEnd = await User.find({}).then((users) =>
-			users.map((user) => user.toJSON())
-		);
 	});
 });
 
