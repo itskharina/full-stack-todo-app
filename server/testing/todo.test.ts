@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
-import { describe, it, afterAll, beforeEach, expect, vi } from 'vitest';
+import { describe, it, afterAll, beforeEach, expect, vi, beforeAll } from 'vitest';
 import request from 'supertest';
 import app from '../server.js';
 import mongoose from 'mongoose';
@@ -17,6 +17,10 @@ interface UserResponse {
 	last_name: string;
 	todos: string[];
 }
+
+beforeAll(async () => {
+	await mongoose.connect(process.env.TEST_MONGODB_URI as string);
+});
 
 beforeEach(async () => {
 	await User.deleteMany({});
@@ -253,7 +257,7 @@ describe('/PUT todos/id', () => {
 });
 
 afterAll(async () => {
-	await User.deleteMany({});
+	await mongoose.connection.dropDatabase();
 	await mongoose.connection.close();
 	console.log('Server closed');
 });

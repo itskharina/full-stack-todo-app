@@ -1,5 +1,5 @@
 import bcrypt from 'bcrypt';
-import { describe, it, beforeEach, expect, vi, afterAll } from 'vitest';
+import { describe, it, beforeEach, expect, vi, afterAll, beforeAll } from 'vitest';
 import User from '../models/users.js';
 import request from 'supertest';
 import app from '../server.js';
@@ -7,6 +7,10 @@ import mongoose from 'mongoose';
 import Todo from '../models/todo.js';
 
 const api = request(app);
+
+beforeAll(async () => {
+	await mongoose.connect(process.env.TEST_MONGODB_URI as string);
+});
 
 describe('GET /users', () => {
 	it('users are returned as json', async () => {
@@ -30,10 +34,10 @@ describe('GET /users', () => {
 
 describe('POST /users', () => {
 	beforeEach(async () => {
+		// await new Promise((resolve) => setTimeout(resolve, 2000));
+
 		await User.deleteMany({});
 		await Todo.deleteMany({});
-
-		await new Promise((resolve) => setTimeout(resolve, 2000));
 
 		const passwordHash = await bcrypt.hash('Secret1', 10);
 		const user = new User({ email: 'root@gmail.com', passwordHash });
@@ -147,7 +151,6 @@ describe('DELETE /users', () => {
 });
 
 afterAll(async () => {
-	await User.deleteMany({});
+	await mongoose.connection.dropDatabase();
 	await mongoose.connection.close();
-	console.log('Server closed');
 });

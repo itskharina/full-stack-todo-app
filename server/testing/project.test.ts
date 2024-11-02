@@ -1,4 +1,4 @@
-import { describe, it, afterAll, expect, vi, beforeEach } from 'vitest';
+import { describe, it, afterAll, expect, vi, beforeEach, beforeAll } from 'vitest';
 import request from 'supertest';
 import app from '../server.js';
 import mongoose from 'mongoose';
@@ -8,8 +8,13 @@ import User from '../models/users.js';
 const api = request(app);
 let authToken: string;
 
+beforeAll(async () => {
+	await mongoose.connect(process.env.TEST_MONGODB_URI as string);
+});
+
 beforeEach(async () => {
 	await User.deleteMany({});
+	await Project.deleteMany({});
 
 	const newUser = {
 		email: `${Date.now() + Math.random()}@gmail.com`,
@@ -82,6 +87,7 @@ describe('POST /projects', () => {
 });
 
 afterAll(async () => {
+	await mongoose.connection.dropDatabase();
 	await mongoose.connection.close();
 	console.log('Server closed');
 });
