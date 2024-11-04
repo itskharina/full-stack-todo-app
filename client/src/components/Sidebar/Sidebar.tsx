@@ -188,7 +188,10 @@ const MyCreateTodoModal = (props: ModalProps) => {
 			return;
 		}
 
-		const payload = { ...formData, project: formData.project };
+		const payload = {
+			...formData,
+			project: typeof formData.project === 'string' ? formData.project : null,
+		};
 		await todoService.createTodo(payload);
 		window.location.reload();
 

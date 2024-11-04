@@ -12,7 +12,7 @@ export interface ITodo {
 	todo: string;
 	dueDate?: string;
 	priority: string;
-	project: string | null;
+	project: string | IProject | null;
 }
 
 const initialState: ITodo[] = [];

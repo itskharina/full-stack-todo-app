@@ -16,10 +16,8 @@ if (!SECRET) {
 
 const createLogin = async (req: Request, res: Response): Promise<Response | void> => {
 	const body = req.body as LoginRequestBody;
-	console.log('Received login request:', body);
 
 	const user = await User.findOne({ email: body.email });
-	console.log('Found user:', user);
 
 	const passwordCorrect =
 		user === null ? false : await bcrypt.compare(body.password, user.passwordHash);
@@ -37,14 +35,12 @@ const createLogin = async (req: Request, res: Response): Promise<Response | void
 
 	const token = jwt.sign(userForToken, SECRET);
 
-	res
-		.status(200)
-		.send({
-			token,
-			email: user.email,
-			first_name: user.first_name,
-			last_name: user.last_name,
-		});
+	res.status(200).send({
+		token,
+		email: user.email,
+		first_name: user.first_name,
+		last_name: user.last_name,
+	});
 };
 
 export default {

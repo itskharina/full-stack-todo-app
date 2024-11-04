@@ -9,7 +9,6 @@ import { useAccordionButton } from 'react-bootstrap/AccordionButton';
 import { ITodo } from '../store/todoSlice';
 import { IProject } from '../store/todoSlice';
 import { TbSubtask } from 'react-icons/tb';
-import { projectToNameRepresentation } from '../projectUtils';
 import todoService from '../services/todos.js';
 import projectService from '../services/project.js';
 import Modal, { ModalProps } from 'react-bootstrap/Modal';
@@ -50,8 +49,9 @@ const TodoItem = ({ todo, index, priorityImages }: TodoItemProps) => {
 	useEffect(() => {
 		const fetchProjectDetails = async () => {
 			if (todo.project) {
-				const details = projectToNameRepresentation(todo.project as unknown as IProject);
-				setProjectDetails(details);
+				if (typeof todo.project === 'object' && 'name' in todo.project) {
+					setProjectDetails(todo.project.name);
+				}
 			} else {
 				setProjectDetails(null);
 			}
@@ -327,7 +327,13 @@ const MyEditTodoModal = (props: ModalProps & { todo: ITodo }) => {
 			return;
 		}
 
-		const payload = { ...formData, project: formData.project };
+		const payload = {
+			...formData,
+			project:
+				formData.project && typeof formData.project === 'object'
+					? formData.project.id // Use the ID if it's an IProject object
+					: formData.project,
+		};
 		await todoService.updateTodo(payload);
 		window.location.reload();
 
