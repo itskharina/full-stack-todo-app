@@ -5,6 +5,7 @@ import userService from '../../services/user.js';
 import loginService from '../../services/login.js';
 
 const SignupForm = () => {
+	// State to manage form input values
 	const [formData, setFormData] = React.useState({
 		firstName: '',
 		lastName: '',
@@ -12,13 +13,19 @@ const SignupForm = () => {
 		password: '',
 		confirmPassword: '',
 	});
+	// State to manage error messages
 	const [errorMessage, setError] = React.useState('');
 	const navigate = useNavigate();
 
+	// Email validation using regex
 	const isValidEmail = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+
+	// Password strength validation
+	// Requires: length >= 5, at least one digit, at least one uppercase letter
 	const isPasswordStrong = (password: string) =>
 		password.length >= 5 && /\d/.test(password) && /[A-Z]/.test(password);
 
+	// Updates the form state when user types in any input field
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		setFormData((prevFormData) => {
 			return {
@@ -28,11 +35,12 @@ const SignupForm = () => {
 		});
 	};
 
+	// Form submission handler
 	const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 		console.log('Form data:', formData);
 
-		// Basic form validation
+		// Check if any required field is empty
 		if (
 			!formData.firstName ||
 			!formData.lastName ||
@@ -43,11 +51,13 @@ const SignupForm = () => {
 			return;
 		}
 
+		// Validate email format
 		if (!isValidEmail(formData.email)) {
 			setError('Please enter a valid email address.');
 			return;
 		}
 
+		// Validate password strength
 		if (!isPasswordStrong(formData.password)) {
 			setError(
 				'Password must be at least 5 characters long, contain a number, and an uppercase letter.'
@@ -55,12 +65,13 @@ const SignupForm = () => {
 			return;
 		}
 
+		// Check if passwords match
 		if (formData.password !== formData.confirmPassword) {
 			setError('Passwords do not match.');
 			return;
 		}
 
-		// Map formData to match INewUser interface
+		// Prepare user data for API request
 		const userPayload = {
 			first_name: formData.firstName,
 			last_name: formData.lastName,
@@ -69,15 +80,19 @@ const SignupForm = () => {
 		};
 
 		try {
+			// Create new user account
 			await userService.createUser(userPayload);
 
+			// Prepare login credentials
 			const loginPayload = {
 				email: userPayload.email,
 				password: userPayload.password,
 			};
 
+			// Automatically log in the user after successful signup
 			const response = await loginService.loginUser(loginPayload);
 			if (response.token) {
+				// Store authentication token and redirect to upcoming tasks page
 				localStorage.setItem('token', response.token);
 				navigate('/upcoming');
 			} else {
@@ -161,7 +176,9 @@ const SignupForm = () => {
 						value={formData.confirmPassword}
 					/>
 				</div>
+
 				{errorMessage && <p className='error-message'>{errorMessage}</p>}
+
 				<button className='signup-button'>Sign up</button>
 			</form>
 		</div>

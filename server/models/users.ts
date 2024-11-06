@@ -9,7 +9,9 @@ interface IUser {
 	todos: mongoose.Types.ObjectId[];
 }
 
+// Schema definition for the User model
 const userSchema: Schema = new Schema<IUser>({
+	// Unique identifier for the user
 	email: {
 		type: String,
 		required: true,
@@ -17,6 +19,7 @@ const userSchema: Schema = new Schema<IUser>({
 	},
 	first_name: String,
 	last_name: String,
+	// Hashed password for security
 	passwordHash: String,
 	todos: [
 		{
@@ -26,22 +29,29 @@ const userSchema: Schema = new Schema<IUser>({
 	],
 });
 
+// Custom email validation function using regex
 const emailValidator = (email: string) => {
-	// Add your custom validation logic here, e.g., using regular expressions
+	// Validates email format: username@domain.tld
 	return email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/);
 };
 
+// Apply the email validator to the email field in the schema
 userSchema.path('email').validate(emailValidator, 'Invalid email format');
 
+// Custom transformation for the Project document when converting to JSON
+// Removes MongoDB-specific fields and converts _id to id
 userSchema.set('toJSON', {
 	transform: (_document: Document, returnedObject: Record<string, unknown>) => {
+		// Convert _id field into an 'id' field for consistency and a more readable output in the response
 		returnedObject.id = returnedObject._id?.toString() ?? '';
+		// Remove MongoDB-specific fields and sensitive data
 		delete returnedObject._id;
 		delete returnedObject.__v;
-		delete returnedObject.passwordHash;
+		delete returnedObject.passwordHash; // Remove password hash for security
 	},
 });
 
+// Define the User model using the schema
 const User = mongoose.model<IUser>('User', userSchema);
 
 export default User;

@@ -10,10 +10,13 @@ import greenFlag from '../assets/greenflag.png';
 import greyFlag from '../assets/greyflag.png';
 import tokenService from '../services/token.js';
 
+// Displays all of the user's todos
 const Upcoming = () => {
 	const { sidebar } = useSidebar();
 	const dispatch = useAppDispatch();
 
+	// Check for existing user session and restore authentication token
+	// This ensures API calls remain authenticated after page refreshes
 	useEffect(() => {
 		const loggedUserJSON = window.localStorage.getItem('loggedTodoappUser');
 		if (loggedUserJSON) {
@@ -22,6 +25,8 @@ const Upcoming = () => {
 		}
 	}, []);
 
+	// Fetch all todos from the backend and update the Redux store
+	// This effect runs once when the component mount
 	useEffect(() => {
 		const fetchTodos = async () => {
 			try {
@@ -34,8 +39,11 @@ const Upcoming = () => {
 		fetchTodos();
 	}, [dispatch]);
 
+	// Selector to retrieve todos from the Redux store.
 	const todos = useAppSelector((state) => state.todo);
 
+	// Object mapping priority levels to their corresponding flag images
+	// Used to display visual indicators of todo priority
 	const priorityImages: {
 		high: string;
 		medium: string;
@@ -49,7 +57,9 @@ const Upcoming = () => {
 		none: greyFlag,
 	};
 
+	// Render the upcoming todos with the project name and a counter of total todos
 	return (
+		// Adds padding transition if sidebar is open
 		<div className={`upcoming ${sidebar ? 'sidebar-open' : ''}`}>
 			<h1>
 				Upcoming <span className='todos-length'>{todos.length}</span>

@@ -1,6 +1,7 @@
 import * as FaIcons from 'react-icons/fa';
 import { GoPlus } from 'react-icons/go';
 
+// Interface for individual sidebar navigation items
 interface SidebarItem {
 	id: string;
 	title: string;
@@ -9,17 +10,21 @@ interface SidebarItem {
 	cName: string;
 }
 
+// Interface for sidebar categories (Tasks and Projects)
 interface SidebarCategory {
 	title: string;
 	cName: string;
 	items: SidebarItem[];
 }
 
+// Default sidebar navigation structure
+// Contains two main categories: Tasks and Projects
 export const SidebarData: SidebarCategory[] = [
 	{
 		title: 'Tasks',
 		cName: 'tasks-title',
 		items: [
+			// Default tasks
 			{
 				title: 'Upcoming',
 				path: '/upcoming',
@@ -47,6 +52,8 @@ export const SidebarData: SidebarCategory[] = [
 		title: 'Projects',
 		cName: 'projects-title',
 		items: [
+			// Initial Projects section with only "Create new project" button
+			// Additional projects are added dynamically
 			{
 				title: 'Create new project',
 				cName: 'nav-text',
