@@ -239,7 +239,6 @@ const CustomDropDown = React.forwardRef<HTMLAnchorElement, CustomDropDownProps>(
 				onClick(e); // Call the provided onClick
 			}}
 		>
-			{/* Call the provided onClick */}
 			{children}
 		</a>
 	)
