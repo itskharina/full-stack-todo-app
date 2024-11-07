@@ -26,18 +26,26 @@ import orangeFlag from '../../assets/orangeflag.png';
 import greenFlag from '../../assets/greenflag.png';
 import greyFlag from '../../assets/greyflag.png';
 
+// Modal component for creating new projects
 const MyCreateProjectModal = (props: ModalProps) => {
+	// State to track project name input value
 	const [inputValue, setInputValue] = useState('');
 
+	// Handler for form submission
 	const handleSubmit = async () => {
+		// Creates new project with entered name and empty todos array
 		await projectService.createProject({ id: '', name: inputValue, todos: [] });
 
+		// Close modal if onHide prop exists
 		if (props.onHide) {
 			props.onHide();
 		}
+
+		// Refresh page to show new project
 		window.location.reload();
 	};
 
+	// Modal UI with form for project name input
 	return (
 		<Modal {...props} size='lg' aria-labelledby='contained-modal-title-vcenter' centered>
 			<Modal.Header closeButton>
@@ -72,27 +80,33 @@ const MyCreateProjectModal = (props: ModalProps) => {
 	);
 };
 
+// Modal component for confirming project deletion
 const MyDeleteConfirmationModal = (props: ModalProps) => {
-	const [projectsUpdated, setProjectsUpdated] = useState(false);
+	// State to track if projects list needs updating
 	const navigate = useNavigate();
 
+	// Handler for project deletion
 	const handleDelete = async (id: string) => {
 		try {
+			// Attempt to delete project and its todos
 			const response = await projectService.deleteProject(id);
 			if (response.ok) {
 				console.log(`Project with ID ${id} deleted successfully.`);
-				setProjectsUpdated(!projectsUpdated);
+
+				// Redirect to upcoming after deletion
 				navigate('/upcoming');
 				window.location.reload();
 			} else {
 				console.error(`Failed to delete project with ID ${id}.`);
 			}
 		} catch (error) {
+			// Handle any errors during deletion
 			if (error instanceof Error) {
 				console.error(`An error occurred: ${error.message}`);
 			}
 		}
 
+		// Close modal if onHide prop exists
 		if (props.onHide) {
 			props.onHide();
 		}
@@ -111,6 +125,7 @@ const MyDeleteConfirmationModal = (props: ModalProps) => {
 				<Button
 					variant='danger'
 					onClick={() => {
+						// Passes id from props which was retrieved from itemId
 						handleDelete(props.id);
 					}}
 				>
@@ -124,12 +139,16 @@ const MyDeleteConfirmationModal = (props: ModalProps) => {
 	);
 };
 
+// Modal for creating new todos with project assignment
 const MyCreateTodoModal = (props: ModalProps) => {
+	// State management for form and validation
 	const [projects, setProjects] = useState<IProject[]>([]);
 	const [validated, setValidated] = useState(false);
 	const [selectedProject, setSelectedProject] = useState('Select a project!');
 	const [priorityError, setPriorityError] = useState(false);
 	const [projectError, setProjectError] = useState(false);
+
+	// Initialize todo form data
 	const [formData, setFormData] = useState<ITodo>({
 		id: '',
 		title: '',
@@ -139,16 +158,22 @@ const MyCreateTodoModal = (props: ModalProps) => {
 		project: null,
 	});
 
+	// Handle form input changes
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		const { name, value, type, checked } = e.target;
+		// Retrieving the different values from e.target
+		const { name, value } = e.target;
+		// Setting the form data
 		setFormData((prevFormData) => {
 			return {
+				// Maintain the previous form data
 				...prevFormData,
-				[name]: type === 'checkbox' ? checked : value,
+				// Selects e.target.name and updates the value based on the type
+				[name]: value,
 			};
 		});
 	};
 
+	// Fetch the list of projects when the component mounts
 	useEffect(() => {
 		const fetchProjects = async () => {
 			const fetchedProjects = await projectService.getProjects();
@@ -159,6 +184,9 @@ const MyCreateTodoModal = (props: ModalProps) => {
 
 	const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
 		const form = event.currentTarget;
+
+		// Validate form inputs before submitting
+		// It checks if all required fields are filled and valid
 		if (form.checkValidity() === false) {
 			event.preventDefault();
 			event.stopPropagation();
@@ -166,6 +194,7 @@ const MyCreateTodoModal = (props: ModalProps) => {
 
 		let isFormValid = true;
 
+		// Custom validation checks
 		if (!formData.priority) {
 			setPriorityError(true);
 			isFormValid = false;
@@ -180,28 +209,41 @@ const MyCreateTodoModal = (props: ModalProps) => {
 			setProjectError(false);
 		}
 
+		// Mark the form as validated
 		setValidated(true);
 
+		// Check if the form is valid. If it's invalid, prevent form submission.
 		if (!isFormValid) {
+			// Prevent the form from being submitted
 			event.preventDefault();
+			// Stop the event from propagating to other elements
 			event.stopPropagation();
 			return;
 		}
 
+		// Prepare payload for creating a todo
 		const payload = {
 			...formData,
-			project: typeof formData.project === 'string' ? formData.project : null,
+			//
+			project:
+				formData.project && typeof formData.project === 'object'
+					? formData.project.id // If project is an IProject object, extract just the ID
+					: formData.project || null, // If project is already an ID string use it, otherwise null
 		};
 		await todoService.createTodo(payload);
 		window.location.reload();
 
+		// Close the modal if 'onHide' exists
 		if (props.onHide) {
 			props.onHide();
 		}
 	};
 
+	// Update the state when a project is selected
 	const updateProjectState = (project: IProject | null) => {
+		// Updates the project in the dropdown menu
 		setSelectedProject(project ? project.name : 'Upcoming');
+		// Updates the project in the form data
 		setFormData((prevFormData) => ({
 			...prevFormData,
 			project: project ? project.id : null,
@@ -340,13 +382,16 @@ const MyCreateTodoModal = (props: ModalProps) => {
 								title={selectedProject}
 								key={selectedProject}
 							>
+								{/* Default project is Upcoming */}
 								<Dropdown.Item href='#' onClick={() => updateProjectState(null)}>
 									Upcoming
 								</Dropdown.Item>
+								{/* Maps through projects fetched from API and displays them */}
 								{projects.map((project) => (
 									<Dropdown.Item
 										key={project.id}
 										href='#'
+										// Runs update project state function with the project object
 										onClick={() => updateProjectState(project)}
 									>
 										{project.name}
@@ -372,30 +417,38 @@ const MyCreateTodoModal = (props: ModalProps) => {
 	);
 };
 
+// Sidebar component managing the sidebar menu and modals
 const Sidebar = () => {
-	const { sidebar, toggleSidebar } = useSidebar();
-	const [isModalOpen, setIsModalOpen] = useState(false);
-	const [sidebarData, setSidebarData] = useState(SidebarData);
-	const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-	const [itemId, setItemId] = useState('');
-	const [isCreateTodoModalOpen, setIsCreateTodoModalOpen] = useState(false);
+	// Sidebar state and modal open/close handlers
+	const { sidebar, toggleSidebar } = useSidebar(); // Manages sidebar toggle state
+	const [isProjectModalOpen, setIsProjectModalOpen] = useState(false); // State to manage project creation modal visibility
+	const [sidebarData, setSidebarData] = useState(SidebarData); // State to manage sidebar data
+	const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false); // State to manage delete confirmation modal visibility
+	const [itemId, setItemId] = useState(''); // State to track which item is selected for deletion
+	const [isCreateTodoModalOpen, setIsCreateTodoModalOpen] = useState(false); // State to manage the todo creation modal visibility
 
+	// Check for logged in user and set token on initial load
 	useEffect(() => {
 		const loggedUserJSON = window.localStorage.getItem('loggedTodoappUser');
 		if (loggedUserJSON) {
 			const user = JSON.parse(loggedUserJSON);
-			tokenService.setToken(user.token);
+			tokenService.setToken(user.token); // Set token for the authenticated user
 		}
 	}, []);
 
+	// Fetch and update projects in sidebar
 	useEffect(() => {
 		const fetchProjects = async () => {
+			// Fetch list of projects
 			const projects = await projectService.getProjects();
+			// Find the "Projects" category in the sidebar
 			const projectsCategory = SidebarData.find(
 				(category) => category.title === 'Projects'
 			);
 			if (projectsCategory) {
+				// Add fetched projects to the sidebar data
 				projectsCategory.items = [
+					// Preserve the first item (e.g., 'Create new project' button)
 					...projectsCategory.items.slice(0, 1),
 					...projects.map((project: { id: string; name: string }) => {
 						return {
@@ -407,6 +460,7 @@ const Sidebar = () => {
 						};
 					}),
 				];
+				// Update the sidebar data state to reflect the fetched projects
 				setSidebarData([...SidebarData]);
 			}
 		};
@@ -429,6 +483,7 @@ const Sidebar = () => {
 						aria-label='Add new task'
 						onClick={(e) => {
 							e.preventDefault();
+							// Open the create todo modal
 							setIsCreateTodoModalOpen(true);
 						}}
 					>
@@ -443,23 +498,28 @@ const Sidebar = () => {
 								<CgClose color='#524f5f' />
 							</Link>
 						</li>
+						{/* Render categories and their items */}
 						{sidebarData.map((category, categoryIndex) => {
 							return (
 								<React.Fragment key={categoryIndex}>
 									<h3 className={category.cName}>{category.title}</h3>
 									<ul className='categories'>
+										{/* Render each item in the category */}
 										{category.items.map((item, index) => {
 											return (
 												<li
 													key={index}
 													className={item.cName}
 													onClick={(e) => {
+														// Checks if we click the create new project button
 														if (item.title === 'Create new project') {
 															e.preventDefault();
-															setIsModalOpen(true);
+															// Open the project modal
+															setIsProjectModalOpen(true);
 														}
 													}}
 												>
+													{/* Check if item has a 'path' (for links to pages) */}
 													{item.path ? (
 														<Link to={item.path}>
 															<div className='left-sidebar-data'>
@@ -470,7 +530,9 @@ const Sidebar = () => {
 																<button
 																	className='delete-btn'
 																	onClick={() => {
+																		// Open delete modal
 																		setIsDeleteModalOpen(true);
+																		// Set the selected item ID for deletion
 																		setItemId(item.id);
 																	}}
 																>
@@ -479,6 +541,7 @@ const Sidebar = () => {
 															)}
 														</Link>
 													) : (
+														// Display 'create new project' button as it doesn't have a path
 														<span className='project-btn'>
 															{item.icon}
 															<span>{item.title}</span>
@@ -495,8 +558,13 @@ const Sidebar = () => {
 				</nav>
 			</IconContext.Provider>
 
-			{isModalOpen && (
-				<MyCreateProjectModal show={isModalOpen} onHide={() => setIsModalOpen(false)} />
+			{/* Conditional rendering for modals */}
+			{isProjectModalOpen && (
+				<MyCreateProjectModal
+					// Used to decide whether the modal should be visible or not
+					show={isProjectModalOpen}
+					onHide={() => setIsProjectModalOpen(false)}
+				/>
 			)}
 
 			{isCreateTodoModalOpen && (

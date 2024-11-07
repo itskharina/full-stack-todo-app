@@ -2,7 +2,7 @@ name: Lint and Test Code
 
 on:
   push:
-    branches: [testing]
+    branches: [main]
 
 jobs:
   build-and-test:

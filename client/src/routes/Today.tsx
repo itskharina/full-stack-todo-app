@@ -11,6 +11,7 @@ import greyFlag from '../assets/greyflag.png';
 import { isToday } from 'date-fns';
 import { ITodo } from '../store/todoSlice';
 
+// Displays todos that are due today
 const Today = () => {
 	const { sidebar } = useSidebar();
 	const dispatch = useAppDispatch();
@@ -27,8 +28,11 @@ const Today = () => {
 		});
 	}, [dispatch]);
 
+	// Selector to retrieve todos from the Redux store.
 	const todos = useAppSelector((state) => state.todo);
 
+	// Object mapping priority levels to their corresponding flag images
+	// Used to display visual indicators of todo priority
 	const priorityImages: {
 		high: string;
 		medium: string;
@@ -42,7 +46,9 @@ const Today = () => {
 		none: greyFlag,
 	};
 
+	// Render the todos with the project name and a counter of total todos
 	return (
+		// Adds padding transition if sidebar is open
 		<div className={`today ${sidebar ? 'sidebar-open' : ''}`}>
 			<h1>
 				Today <span className='todos-length'>{todos.length}</span>

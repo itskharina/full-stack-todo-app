@@ -2,15 +2,16 @@ import mongoose from 'mongoose';
 import config from '../utils/config.js';
 import logger from '../utils/logger.js';
 
-mongoose.set('strictQuery', false);
+logger.info('connecting to DB');
 
-logger.info('connecting to', config.MONGODB_URI);
-
+// Attempt to connect to MongoDB using the URI stored in config
 mongoose
 	.connect(config.MONGODB_URI)
 	.then(() => {
+		// If connection is successful, log a success message
 		logger.info('connected to MongoDB');
 	})
+	// If connection fails, log the error message
 	.catch((error) => {
 		logger.error('error connecting to MongoDB:', error.message);
 	});

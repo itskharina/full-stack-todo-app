@@ -27,8 +27,11 @@ const Week = () => {
 		});
 	}, [dispatch]);
 
+	// Selector to retrieve todos from the Redux store.
 	const todos = useAppSelector((state) => state.todo);
 
+	// Object mapping priority levels to their corresponding flag images
+	// Used to display visual indicators of todo priority
 	const priorityImages: {
 		high: string;
 		medium: string;
@@ -42,7 +45,9 @@ const Week = () => {
 		none: greyFlag,
 	};
 
+	// Render the todos with the project name and a counter of total todos
 	return (
+		// Adds padding transition if sidebar is open
 		<div className={`week ${sidebar ? 'sidebar-open' : ''}`}>
 			<h1>
 				This Week <span className='todos-length'>{todos.length}</span>

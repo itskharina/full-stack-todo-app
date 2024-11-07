@@ -14,6 +14,7 @@ import projectService from '../services/project.js';
 import Modal, { ModalProps } from 'react-bootstrap/Modal';
 import { Button, DropdownButton, Form } from 'react-bootstrap';
 
+// Importing flag images for the priority levels
 import redFlag from '../assets/redflag.png';
 import orangeFlag from '../assets/orangeflag.png';
 import greenFlag from '../assets/greenflag.png';
@@ -41,14 +42,18 @@ interface TodoListProps {
 	};
 }
 
+// Component that displays each individual todo item within a Card
 const TodoItem = ({ todo, index, priorityImages }: TodoItemProps) => {
+	// State management for project details and modals
 	const [projectDetails, setProjectDetails] = useState<string | null>(null);
 	const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 	const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
+	// Fetch and set project details for a specific todo when todo.project changes
 	useEffect(() => {
 		const fetchProjectDetails = async () => {
 			if (todo.project) {
+				// Checking if the todo project is an object and the project has a name
 				if (typeof todo.project === 'object' && 'name' in todo.project) {
 					setProjectDetails(todo.project.name);
 				}
@@ -60,12 +65,15 @@ const TodoItem = ({ todo, index, priorityImages }: TodoItemProps) => {
 		fetchProjectDetails();
 	}, [todo.project]);
 
+	// Function to mark todo as completed by striking through and deleting the todo after a short delay
 	const completeTodo = async (id: string) => {
 		try {
 			const element = document.getElementById(id);
 			if (element) {
+				// Add strikethrough animation
 				element.classList.add('strikethrough');
 
+				// Delete todo after animation
 				setTimeout(async () => {
 					const response = await todoService.deleteTodo(id);
 					if (response.ok) {
@@ -171,13 +179,23 @@ const TodoItem = ({ todo, index, priorityImages }: TodoItemProps) => {
 	);
 };
 
+// Component that maps through the todos and displays them
 const TodoList = ({ todos, priorityImages }: TodoListProps) => {
+	// Sorting todos based on due date (ascending order)
 	const sortedTodos = [...todos].sort((a, b) => {
+		// Convert due dates to Date objects if they exist, otherwise null
 		const aDueDate = a.dueDate ? new Date(a.dueDate) : null;
 		const bDueDate = b.dueDate ? new Date(b.dueDate) : null;
 
+		// If a has no due date, move it to the end
 		if (!aDueDate) return 1;
+		// If b has no due date, move it to the end
 		if (!bDueDate) return -1;
+
+		// Compare timestamps for normal sorting
+		// Negative: a comes first
+		// Positive: b comes first
+		// Zero: no change in order
 		return aDueDate.getTime() - bDueDate.getTime();
 	});
 
@@ -190,6 +208,7 @@ const TodoList = ({ todos, priorityImages }: TodoListProps) => {
 	);
 };
 
+// Custom toggle component for accordion expansion
 const CustomToggle = ({ eventKey }: { eventKey: string }) => {
 	const decoratedOnClick = useAccordionButton(eventKey, () =>
 		console.log('totally custom!')
@@ -202,18 +221,22 @@ const CustomToggle = ({ eventKey }: { eventKey: string }) => {
 };
 
 interface CustomDropDownProps {
+	// Content to be rendered inside the dropdown
 	children: React.ReactNode;
+	// Click handler
 	onClick: (e: React.MouseEvent<HTMLAnchorElement>) => void;
 }
 
+// Custom dropdown component to handle clicks
+// forwardRef allows the CustomDropDown to forward a ref to the underlying <a> element
 const CustomDropDown = React.forwardRef<HTMLAnchorElement, CustomDropDownProps>(
 	({ children, onClick }, ref) => (
 		<a
-			href=''
-			ref={ref}
+			href='' // Empty href to prevent default link behavior
+			ref={ref} // Forward the ref to the anchor element
 			onClick={(e) => {
 				e.preventDefault();
-				onClick(e);
+				onClick(e); // Call the provided onClick
 			}}
 		>
 			{children}
@@ -221,6 +244,7 @@ const CustomDropDown = React.forwardRef<HTMLAnchorElement, CustomDropDownProps>(
 	)
 );
 
+// Modal for confirming the deletion of a todo
 const MyDeleteConfirmationModal = (props: ModalProps) => {
 	const handleDelete = async (id: string) => {
 		try {
@@ -266,6 +290,7 @@ const MyDeleteConfirmationModal = (props: ModalProps) => {
 };
 
 const MyEditTodoModal = (props: ModalProps & { todo: ITodo }) => {
+	// State management for form data and validation
 	const [projects, setProjects] = useState<IProject[]>([]);
 	const [validated, setValidated] = useState(false);
 	const [priorityError, setPriorityError] = useState(false);
@@ -278,16 +303,18 @@ const MyEditTodoModal = (props: ModalProps & { todo: ITodo }) => {
 			: undefined,
 	});
 
+	// Handle form input changes
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		const { name, value, type, checked } = e.target;
+		const { name, value } = e.target;
 		setFormData((prevFormData) => {
 			return {
 				...prevFormData,
-				[name]: type === 'checkbox' ? checked : value,
+				[name]: value,
 			};
 		});
 	};
 
+	// Fetch projects on component mount
 	useEffect(() => {
 		const fetchProjects = async () => {
 			const fetchedProjects = await projectService.getProjects();
@@ -296,6 +323,7 @@ const MyEditTodoModal = (props: ModalProps & { todo: ITodo }) => {
 		fetchProjects();
 	}, []);
 
+	// Handle form submission with validation
 	const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 		const form = e.currentTarget;
 		if (form.checkValidity() === false) {
@@ -331,8 +359,8 @@ const MyEditTodoModal = (props: ModalProps & { todo: ITodo }) => {
 			...formData,
 			project:
 				formData.project && typeof formData.project === 'object'
-					? formData.project.id // Use the ID if it's an IProject object
-					: formData.project,
+					? formData.project.id // If project is an IProject object, extract just the ID
+					: formData.project || null, // If project is already an ID string use it, otherwise null
 		};
 		await todoService.updateTodo(payload);
 		window.location.reload();
@@ -342,8 +370,11 @@ const MyEditTodoModal = (props: ModalProps & { todo: ITodo }) => {
 		}
 	};
 
+	// Update the state when a project is selected
 	const updateProjectState = (project: IProject | null) => {
+		// Updates the project in the dropdown menu
 		setSelectedProject(project ? project.name : 'Upcoming');
+		// Updates the project in the form data
 		setFormData((prevFormData) => ({
 			...prevFormData,
 			project: project ? project.id : null,

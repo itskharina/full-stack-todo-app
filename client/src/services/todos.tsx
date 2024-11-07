@@ -9,13 +9,18 @@ interface ITodo {
 	project: string | null;
 }
 
+// Define the base URL for the project-related API endpoints.
 const baseUrl = 'http://localhost:3001/todos';
 
+// Helper function to get headers for authorization and content type
 const getAuthHeaders = () => ({
+	// Ensure JSON format for request body
 	'Content-type': 'application/json; charset=UTF-8',
+	// Retrieve and add the token from tokenService if available
 	Authorization: tokenService.getToken() || '',
 });
 
+// Fetch all todos from the API
 const getTodos = async () => {
 	try {
 		const response = await fetch(baseUrl, {
@@ -31,6 +36,7 @@ const getTodos = async () => {
 	}
 };
 
+// Create a new todo
 const createTodo = async (newObject: ITodo) => {
 	try {
 		const response = await fetch(baseUrl, {
@@ -49,6 +55,7 @@ const createTodo = async (newObject: ITodo) => {
 	}
 };
 
+// Update an existing todo
 const updateTodo = async (newObject: ITodo) => {
 	try {
 		const url = `${baseUrl}/${newObject.id}`;
@@ -69,6 +76,7 @@ const updateTodo = async (newObject: ITodo) => {
 	}
 };
 
+// Delete a todo item by its ID
 const deleteTodo = (id: string) => {
 	const request = fetch(`${baseUrl}/${id}`, {
 		method: 'DELETE',

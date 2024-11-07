@@ -29,7 +29,7 @@ beforeEach(async () => {
 		password: 'Testing1',
 	};
 
-	await new Promise((resolve) => setTimeout(resolve, 5000)); // Wait for MongoDB connection to be ready
+	await new Promise((resolve) => setTimeout(resolve, 5000));
 
 	const response = await api.post('/users').send(newUser);
 
